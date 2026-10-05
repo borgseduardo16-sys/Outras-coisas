@@ -1,0 +1,9 @@
+{
+  "name": "desafio-31-dias",
+  "private": true,
+  "scripts": {
+    "build:3d": "esbuild src3d/figure3d.js --bundle --minify --format=iife --outfile=js/vendor/figure3d.js",
+    "start": "python3 -m http.server 8080"
+  },
+  "devDependencies": { "esbuild": "^0.25.0", "three": "^0.170.0" }
+}

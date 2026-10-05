@@ -97,3 +97,60 @@ D31.progress = (() => {
     porcentagem: () => Math.round((concluidosQtd() / T) * 100),
   };
 })();
+
+/* ---------- Extensões: estatísticas, jornada e conquistas ---------- */
+(() => {
+  const S = () => D31.storage.get();
+  const P = D31.progress;
+
+  P.datasComTreino = () => new Set(S().historico.map((h) => h.data));
+
+  P.melhorSequencia = () => {
+    const datas = [...P.datasComTreino()].sort();
+    let melhor = 0, atual = 0, ant = null;
+    datas.forEach((d) => {
+      atual = ant && D31.dates.diff(ant, d) === 1 ? atual + 1 : 1;
+      melhor = Math.max(melhor, atual); ant = d;
+    });
+    return melhor;
+  };
+  P.minutosTotais = () => Math.round(S().historico.reduce((s, h) => s + (h.duracaoSeg || 0), 0) / 60);
+  P.exerciciosTotais = () => S().historico.reduce((s, h) => s + (h.exercicios || 0), 0);
+
+  P.progressoFase = (fase) => {
+    let feitos = 0;
+    for (let n = fase.dias[0]; n <= fase.dias[1]; n++) if (P.foiConcluido(n)) feitos++;
+    const total = fase.dias[1] - fase.dias[0] + 1;
+    return { feitos, total, completa: feitos === total };
+  };
+
+  /** Últimos 7 dias (terminando hoje) com marcação de treino. */
+  P.semana = () => {
+    const datas = P.datasComTreino(), hoje = D31.dates.hoje(), dias = [];
+    const nomes = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+    for (let i = 6; i >= 0; i--) {
+      const d = D31.dates.add(hoje, -i);
+      dias.push({ data: d, letra: nomes[new Date(D31.dates.parse(d)).getUTCDay()], feito: datas.has(d), hoje: i === 0 });
+    }
+    return dias;
+  };
+
+  P.conquistas = () => {
+    const c = P.concluidosQtd(), melhor = P.melhorSequencia(), fases = D31.FASES.map(P.progressoFase);
+    return [
+      { id: 'primeiro', icone: 'star', titulo: 'Primeiro passo', desc: 'Concluiu o 1º treino', ok: c >= 1 },
+      { id: 'seq3', icone: 'flame', titulo: '3 dias seguidos', desc: 'Sequência de 3 dias', ok: melhor >= 3 },
+      { id: 'semana', icone: 'calendar', titulo: 'Uma semana', desc: '7 dias concluídos', ok: c >= 7 },
+      { id: 'fase1', icone: 'shield', titulo: 'Adaptação completa', desc: 'Fase 1 concluída', ok: fases[0].completa },
+      { id: 'fase2', icone: 'repeat', titulo: 'Consistência', desc: 'Fase 2 concluída', ok: fases[1].completa },
+      { id: 'meio', icone: 'target', titulo: 'Meio caminho', desc: '16 dias concluídos', ok: c >= 16 },
+      { id: 'fase3', icone: 'walk', titulo: 'Evolução', desc: 'Fase 3 concluída', ok: fases[2].completa },
+      { id: 'final', icone: 'trophy', titulo: 'Desafio completo', desc: '31 dias concluídos', ok: c >= D31.TOTAL_DIAS },
+    ];
+  };
+
+  P.registrarEsforco = (dia, esforco) => {
+    const h = [...S().historico].reverse().find((x) => x.dia === dia);
+    if (h) { h.esforco = esforco; D31.storage.salvar(); }
+  };
+})();

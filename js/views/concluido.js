@@ -10,7 +10,17 @@ D31.views.concluido = (n) => {
   const prox = P.proximoDia();
   const seq = P.sequencia();
 
+  const esf = h('div', { class: 'esforco' },
+    h('p', { class: 'esforco-t' }, 'Como foi o treino de hoje?'),
+    h('div', { class: 'esforco-opcoes', role: 'group', 'aria-label': 'Como foi o treino' },
+      [['leve', '😌', 'Leve'], ['medida', '🙂', 'Na medida'], ['cansativo', '😮‍💨', 'Cansativo']].map(([v, e, t]) => h('button', {
+        type: 'button', class: 'esforco-op', 'aria-pressed': reg.esforco === v ? 'true' : 'false',
+        onclick: (ev) => { P.registrarEsforco(n, v); esf.querySelectorAll('.esforco-op').forEach((b) => b.setAttribute('aria-pressed', 'false')); ev.currentTarget.setAttribute('aria-pressed', 'true'); esf.querySelector('.esforco-ok').textContent = 'Anotado. Obrigado!'; },
+      }, h('span', { 'aria-hidden': 'true' }, e), t))),
+    h('p', { class: 'esforco-ok', 'aria-live': 'polite' }, reg.esforco ? 'Anotado. Obrigado!' : ''));
+
   return h('div', { class: 'tela tela-festa' },
+    D31.Confete(),
     h('div', { class: 'festa-emoji', 'aria-hidden': 'true' }, '🎉'),
     h('h1', { tabindex: '-1' }, 'TREINO CONCLUÍDO!'),
     h('p', { class: 'lead' }, `Você completou o Dia ${n}.`),
@@ -21,6 +31,7 @@ D31.views.concluido = (n) => {
       D31.Stat(`${P.concluidosQtd()}/${T} · ${P.porcentagem()}%`, 'Progresso total'),
       D31.Stat(`🔥 ${seq} ${seq === 1 ? 'dia' : 'dias'}`, 'Sequência atual')),
     D31.BarraProgresso(P.porcentagem()),
+    esf,
     reg.repeticao && h('p', { class: 'nota' }, 'Este dia foi repetido, por isso o progresso total não mudou.'),
     prox && h('p', { class: 'lead' }, P.podeTreinar(prox) ? `Próximo: Dia ${prox}.` : `Volte amanhã para o Dia ${prox}.`),
     D31.Botao({ texto: 'VOLTAR AO CALENDÁRIO', icone: 'calendar', grande: true, href: '#/calendario' }),
@@ -43,6 +54,7 @@ D31.views.desafio = () => {
   atualizar();
 
   return h('div', { class: 'tela tela-festa' },
+    D31.Confete(),
     h('div', { class: 'festa-emoji', 'aria-hidden': 'true' }, '🏆'),
     h('h1', { tabindex: '-1' }, 'DESAFIO CONCLUÍDO'),
     h('p', { class: 'lead' }, 'Você completou os 31 dias.'),

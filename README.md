@@ -18,3 +18,8 @@ Aplicação web estática, sem build: abra `index.html` ou sirva a pasta (`pytho
 ## Progresso
 O calendário é ancorado na data de início. Dias perdidos ficam como "não concluído" sem apagar nada;
 "Continuar a partir de hoje" reancora o calendário.
+
+## Boneco 3D
+O boneco humano é gerado em código (`src3d/figure3d.js`, Three.js) e empacotado em `js/vendor/figure3d.js`.
+Após editar poses/modelo: `npm install && npm run build:3d`. Sem WebGL, o app usa uma ilustração 2D de reserva.
+Poses por exercício ficam em `ANIMS` (campo `animacao` de cada exercício).

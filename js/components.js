@@ -28,6 +28,13 @@ window.D31 = window.D31 || {};
     walk: '<circle cx="13" cy="4.5" r="1.8"/><path d="M12 8l-2 5 3 2 1 5M12 8l3 2 3 1M10 13l-3 3"/>',
     heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/>',
     print: '<path d="M7 9V4h10v5M7 17H5a1 1 0 01-1-1v-5a1 1 0 011-1h14a1 1 0 011 1v5a1 1 0 01-1 1h-2M7 14h10v6H7z"/>',
+    trophy: '<path d="M8 4h8v5a4 4 0 01-8 0zM8 6H5v1a3 3 0 003 3M16 6h3v1a3 3 0 01-3 3M12 13v4M8 20h8M10 17h4"/>',
+    flame: '<path d="M12 3s5 4.5 5 9.5a5 5 0 01-10 0c0-2 1-3 2-4 .3 1.5 1 2 2 2 0-3-1-5 1-7.5z"/>',
+    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    rotate: '<path d="M20 12a8 8 0 11-2.4-5.7M20 4v5h-5"/>',
+    turtle: '<path d="M3 15c0-4 3-7 8-7s8 3 8 7zM6 15v3M16 15v3M19 12l2-2"/>',
+    zap: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
     shield: '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   };
   D31.icon = (nome, tam = 24) => h('span', {
