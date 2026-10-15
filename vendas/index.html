@@ -3,435 +3,408 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Desafio 31 Dias — Rotina guiada de movimento</title>
-<meta name="description" content="Treinos simples e guiados de 5 a 8 minutos por dia, com boneco 3D que mostra cada movimento. Uma rotina de movimento, mobilidade e fortalecimento gradual para quem tem 50 anos ou mais.">
-<meta name="theme-color" content="#052F31">
+<title>Desafio 31 Dias — Movimento todo dia, em poucos minutos</title>
+<meta name="description" content="31 dias de treinos guiados de 5 a 8 minutos, no celular, sem equipamentos. Uma rotina simples de movimento, mobilidade e fortalecimento gradual para qualquer idade.">
+<meta name="theme-color" content="#14162B">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0F2A2A; --muted:#3F5656; --teal:#0E6B66; --teal-esc:#052F31; --teal-med:#0A5A58; --menta:#E1F1EE;
-  --creme:#FBF8F2; --laranja:#F2733B; --laranja-cl:#FF9C63; --ouro:#FFC857; --linha:#DCE7E3;
-  --serif:"Fraunces",Georgia,serif; --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --ink:#14162B; --ink2:#2B2E4A; --muted:#565A78; --bg:#FFF9F3; --card:#FFFFFF; --linha:#EBE4DB;
+  --coral:#FF5E4D; --laranja:#FF9A3D; --lilas:#ECE8FF; --lilas2:#6C5CE7; --pessego:#FFE9D9; --amarelo:#FFD166;
+  --grad:linear-gradient(135deg,#FF7A59,#FF9A3D);
+  --head:"Sora",system-ui,sans-serif; --body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 }
-*{box-sizing:border-box} html{font-size:19px;scroll-behavior:smooth} 
-body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--creme);line-height:1.6;-webkit-text-size-adjust:100%}
-img{max-width:100%;display:block} a{color:inherit}
-h1,h2,h3{font-family:var(--serif);line-height:1.12;margin:0 0 .6rem;letter-spacing:-.01em}
-h1{font-size:clamp(2.3rem,8.5vw,4rem);font-weight:800} h2{font-size:clamp(1.9rem,6vw,2.8rem);font-weight:700} h3{font-size:1.35rem}
+*{box-sizing:border-box} html{font-size:18px;scroll-behavior:smooth}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.65;-webkit-text-size-adjust:100%;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block} a{color:inherit}
+h1,h2,h3{font-family:var(--head);line-height:1.1;margin:0 0 .6rem;letter-spacing:-.025em;font-weight:800}
+h1{font-size:clamp(2.2rem,8.4vw,4.6rem)} h2{font-size:clamp(1.9rem,5.6vw,3rem)} h3{font-size:1.25rem;letter-spacing:-.015em;font-weight:700}
 p{margin:0 0 1rem}
-.wrap{width:min(1100px,100% - 40px);margin-inline:auto}
-section{padding:68px 0}
-:focus-visible{outline:4px solid var(--ouro);outline-offset:3px;border-radius:10px}
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+section{padding:84px 0;position:relative}
+:focus-visible{outline:4px solid var(--lilas2);outline-offset:3px;border-radius:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* Botão de compra */
-.cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;text-align:center;text-decoration:none;font:800 1.2rem/1.2 var(--sans);letter-spacing:.03em;
-  min-height:72px;padding:16px 34px;border-radius:22px;color:#3A1500;background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));
-  box-shadow:0 14px 30px rgba(242,115,59,.45);transition:transform .15s,box-shadow .15s;max-width:100%}
-.cta:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(242,115,59,.55)}
-.cta svg{flex:none}
-.cta-grande{min-height:84px;font-size:1.3rem;padding-inline:44px}
-.cta-pulso{animation:pulso 2.4s ease-in-out infinite}
-@keyframes pulso{0%,100%{box-shadow:0 14px 30px rgba(242,115,59,.45)}50%{box-shadow:0 14px 30px rgba(242,115,59,.45),0 0 0 14px rgba(242,115,59,.16)}}
-.micro{font-size:.9rem;font-weight:600;opacity:.85;margin-top:12px}
+/* Botão */
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:14px;text-decoration:none;text-align:center;font:700 1.15rem/1.2 var(--head);
+  letter-spacing:-.005em;color:#2A0D05;background:var(--grad);padding:20px 34px;min-height:68px;border-radius:999px;max-width:100%;
+  box-shadow:0 16px 36px -8px rgba(255,94,77,.55),inset 0 -3px 0 rgba(0,0,0,.08);transition:transform .18s,box-shadow .18s}
+.cta:hover{transform:translateY(-3px);box-shadow:0 22px 44px -8px rgba(255,94,77,.65),inset 0 -3px 0 rgba(0,0,0,.08)}
+.cta .seta{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#14162B;color:#fff;flex:none}
+.cta-g{min-height:78px;padding:22px 42px;font-size:1.25rem}
+.cta-escuro{background:var(--ink);color:#fff;box-shadow:0 14px 30px -8px rgba(20,22,43,.5)}
+.cta-escuro .seta{background:var(--grad);color:#2A0D05}
+.nota-cta{font-size:.9rem;color:var(--muted);margin:14px 0 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nota-cta svg{color:var(--coral)}
 
 /* Topo */
-.topo{position:sticky;top:0;z-index:30;background:rgba(5,47,49,.94);backdrop-filter:blur(10px)}
-.topo .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
-.marca{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800}
-.marca i{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#0A5A58,#17A398);font:700 1.1rem var(--serif);font-style:normal}
-.topo .cta{min-height:48px;padding:8px 20px;font-size:.95rem;border-radius:14px;box-shadow:none}
+.topo{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,box-shadow .3s}
+.topo.sol{background:rgba(255,249,243,.9);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--linha)}
+.topo .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 1.05rem var(--head)}
+.marca i{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--ink);color:#fff;font:800 1.05rem var(--head);font-style:normal}
+.topo .cta{min-height:48px;padding:10px 12px 10px 22px;font-size:.95rem;box-shadow:none}
+.topo .cta .seta{width:28px;height:28px}
 
 /* Hero */
-.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(145deg,#052F31 0%,#0A5A58 55%,#17A398 130%);padding:54px 0 0}
-.hero::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-180px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,87,.35),transparent 65%)}
-.hero .wrap{position:relative;display:grid;gap:30px;align-items:end}
-.hero-txt{padding-bottom:40px}
-.selo{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:7px 16px;border-radius:999px;font-weight:800;font-size:.9rem;margin-bottom:18px;color:var(--ouro)}
-.hero h1{color:#fff} .hero h1 em{font-style:normal;color:var(--ouro)}
-.hero p.sub{font-size:1.25rem;color:#DDF2EF;max-width:34ch}
-.checks{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:10px}
-.checks li{display:flex;gap:12px;align-items:flex-start;font-weight:700}
-.checks svg{flex:none;margin-top:3px;color:var(--ouro)}
-.hero-img{position:relative;justify-self:center;width:min(440px,100%)}
-.hero-img .card3d{border-radius:32px 32px 0 0;overflow:hidden;background:linear-gradient(180deg,#EAF6F3,#fff);box-shadow:0 30px 60px rgba(0,0,0,.35)}
-.hero-img img{width:100%;aspect-ratio:9/11;object-fit:cover;object-position:center top;transform:scale(.86);transform-origin:50% 62%}
-.flutua{position:absolute;background:#fff;color:var(--ink);border-radius:18px;padding:10px 16px;font-weight:800;font-size:.95rem;box-shadow:0 14px 30px rgba(0,0,0,.25);display:flex;gap:8px;align-items:center}
-.flutua b{color:var(--teal)}
-.f1{left:-14px;top:18%} .f2{right:-10px;top:46%} 
-@media(min-width:880px){.hero .wrap{grid-template-columns:1.15fr 1fr}.hero{padding-top:70px}}
-@media(max-width:520px){.f1{left:6px}.f2{right:6px}}
-@media(max-width:440px){.marca span{display:none}}
+.hero{padding:132px 0 40px;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+.hero::before{width:520px;height:520px;right:-120px;top:-60px;background:rgba(255,154,61,.35)}
+.hero::after{width:460px;height:460px;left:-160px;top:320px;background:rgba(108,92,231,.18)}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr);gap:56px;align-items:center}
+.hero .wrap>*{min-width:0}
+.pilula{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--linha);padding:8px 18px 8px 10px;border-radius:999px;font-weight:700;font-size:.92rem;margin-bottom:22px;box-shadow:0 6px 18px rgba(20,22,43,.06)}
+.pilula b{background:var(--grad);color:#2A0D05;border-radius:999px;padding:3px 12px;font-family:var(--head);font-size:.8rem}
+.hero h1 .dest{position:relative;white-space:nowrap;color:var(--coral)}
+.hero h1 .dest::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.28em;background:var(--amarelo);opacity:.7;z-index:-1;border-radius:6px}
+.hero p.sub{font-size:1.3rem;color:var(--muted);max-width:30em;margin-bottom:30px}
+.provas{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:34px}
+.prova b{display:block;font:800 1.9rem var(--head);letter-spacing:-.03em}
+.prova span{font-size:.9rem;color:var(--muted);font-weight:500}
+@media(min-width:900px){.hero .wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.hero h1{font-size:clamp(3rem,4.6vw,4rem)}}
 
-/* Faixa de confiança */
-.faixa{background:var(--teal-esc);color:#fff;padding:22px 0}
-.faixa ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;text-align:center}
-.faixa li{font-weight:800;display:flex;gap:10px;align-items:center;justify-content:center}
-.faixa svg{color:var(--ouro);flex:none}
+/* Celulares */
+.palco{position:relative;height:560px;display:flex;justify-content:center}
+.fone{position:absolute;width:262px;border-radius:42px;padding:10px;background:#14162B;box-shadow:0 40px 70px -20px rgba(20,22,43,.5),inset 0 0 0 2px #35385A}
+.fone::before{content:"";position:absolute;left:50%;top:15px;transform:translateX(-50%);width:76px;height:20px;border-radius:12px;background:#14162B;z-index:2}
+.fone img{border-radius:33px;width:100%;aspect-ratio:390/844;object-fit:cover;object-position:top;background:#eee}
+.fone.a{transform:rotate(-6deg) translateX(-96px);z-index:2;animation:flu 7s ease-in-out infinite}
+.fone.b{transform:rotate(7deg) translate(112px,46px);z-index:1;animation:flu 8s ease-in-out -3s infinite}
+@keyframes flu{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.chip{position:absolute;z-index:3;background:#fff;border-radius:20px;padding:12px 18px;font-weight:700;font-size:.95rem;box-shadow:0 18px 40px -10px rgba(20,22,43,.3);display:flex;gap:10px;align-items:center;animation:flu 6s ease-in-out infinite}
+.chip .e{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;font-size:1.2rem}
+.chip small{display:block;font-weight:500;color:var(--muted);font-size:.78rem;line-height:1.2}
+.c1{left:0;top:26px} .c1 .e{background:var(--pessego)} .c2{right:0;bottom:70px;animation-delay:-2s} .c2 .e{background:var(--lilas)}
+@media(max-width:560px){.hero h1 .dest{white-space:normal}.palco{height:500px}.fone{width:224px}.fone.a{transform:rotate(-6deg) translateX(-70px)}.fone.b{transform:rotate(7deg) translate(80px,40px)}.c1{left:-6px}.c2{right:-6px;bottom:40px}}
 
-/* Títulos de seção */
-.kicker{display:inline-block;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--teal);margin-bottom:10px}
-.centro{text-align:center} .centro p.lead{margin-inline:auto}
-.lead{font-size:1.25rem;color:var(--muted);max-width:46ch}
+/* Faixa */
+.faixa{background:var(--ink);color:#fff;padding:20px 0;overflow:hidden;transform:rotate(-1.2deg);margin:30px -10px 0}
+.faixa-trilho{display:flex;gap:44px;width:max-content;animation:rola 32s linear infinite;font:700 1.15rem var(--head);white-space:nowrap}
+.faixa-trilho span::after{content:"✦";margin-left:44px;color:var(--laranja)}
+@keyframes rola{to{transform:translateX(-50%)}}
 
-/* Identificação */
-.dores{background:#fff}
-.grid-dores{display:grid;gap:14px;margin-top:30px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.dor{display:flex;gap:16px;align-items:flex-start;background:var(--creme);border:1px solid var(--linha);border-radius:22px;padding:22px}
-.dor .ic{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:var(--menta);color:var(--teal)}
-.dor p{margin:0;font-weight:700;font-size:1.05rem}
-.virada{margin-top:34px;background:linear-gradient(135deg,#0A5A58,#0E6B66);color:#fff;border-radius:28px;padding:32px;text-align:center}
-.virada h3{color:#fff;font-size:1.7rem;margin-bottom:.4rem}
-.virada p{margin:0 auto;max-width:56ch;color:#DDF2EF}
+/* Títulos */
+.rot{display:inline-block;font:700 .82rem var(--head);letter-spacing:.14em;text-transform:uppercase;color:var(--lilas2);background:var(--lilas);padding:7px 16px;border-radius:999px;margin-bottom:18px}
+.cab{max-width:760px;margin-bottom:46px}.cab.c{margin-inline:auto;text-align:center}
+.cab p{font-size:1.2rem;color:var(--muted)}
+
+/* Para quem é */
+.bento{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.bc{background:var(--card);border:1px solid var(--linha);border-radius:30px;padding:30px;box-shadow:0 18px 40px -26px rgba(20,22,43,.35);transition:transform .25s}
+.bc:hover{transform:translateY(-6px)}
+.bc .em{display:grid;place-items:center;width:62px;height:62px;border-radius:20px;font-size:1.8rem;margin-bottom:18px}
+.bc:nth-child(1) .em{background:var(--pessego)} .bc:nth-child(2) .em{background:var(--lilas)} .bc:nth-child(3) .em{background:#DDF3FF} .bc:nth-child(4) .em{background:#FFF0B8}
+.bc p{margin:0;color:var(--muted)} .bc h3{margin-bottom:.4rem}
+
+/* Slider antes/depois */
+.contraste{background:linear-gradient(180deg,var(--bg),#fff 20%,#fff 80%,var(--bg))}
+.cmp{position:relative;max-width:860px;margin:0 auto;border-radius:36px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 40px 80px -30px rgba(20,22,43,.5);user-select:none;background:#ddd;touch-action:pan-y}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cmp .topo-img{clip-path:inset(0 calc(100% - var(--p,50%)) 0 0)}
+.cmp .linha{position:absolute;top:0;bottom:0;left:var(--p,50%);width:4px;margin-left:-2px;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.4);pointer-events:none}
+.cmp .linha::after{content:"↔";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.etq{position:absolute;bottom:18px;background:rgba(20,22,43,.78);color:#fff;font:700 .95rem var(--head);padding:9px 18px;border-radius:999px;backdrop-filter:blur(6px);pointer-events:none}
+.etq.e1{left:18px}.etq.e2{right:18px;background:var(--grad);color:#2A0D05}
+.leg{text-align:center;font-size:.85rem;color:var(--muted);margin-top:18px}
 
 /* Como funciona */
-.passos{display:grid;gap:22px;margin-top:40px;counter-reset:p}
-.passo{display:grid;gap:22px;align-items:center;background:#fff;border-radius:30px;padding:26px;box-shadow:0 14px 40px rgba(8,64,63,.10);border:1px solid var(--linha)}
-.passo .num{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#3A1500;font:800 1.5rem var(--serif);margin-bottom:12px}
-@media(min-width:820px){.passo{grid-template-columns:1fr 280px;padding:34px 44px}.passo:nth-child(even){grid-template-columns:280px 1fr}.passo:nth-child(even) .fone{order:-1}}
+.passos{display:grid;gap:22px}
+.passo{background:var(--card);border:1px solid var(--linha);border-radius:36px;padding:34px 30px 0;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 44px -28px rgba(20,22,43,.4)}
+.passo .n{font:800 .9rem var(--head);color:var(--coral);letter-spacing:.1em;margin-bottom:10px}
+.passo p{color:var(--muted)}
+.passo .mini{margin:10px auto 0;width:min(240px,100%);border-radius:30px 30px 0 0;padding:9px 9px 0;background:var(--ink);box-shadow:0 -10px 40px rgba(20,22,43,.18)}
+.passo .mini img{border-radius:23px 23px 0 0;width:100%;aspect-ratio:390/560;object-fit:cover;object-position:top}
+.passo:nth-child(1){background:linear-gradient(180deg,#fff,var(--pessego))}.passo:nth-child(2){background:linear-gradient(180deg,#fff,var(--lilas))}.passo:nth-child(3){background:linear-gradient(180deg,#fff,#DDF3FF)}
+@media(min-width:880px){.passos{grid-template-columns:repeat(3,1fr)}}
 
-/* Celular */
-.fone{justify-self:center;width:250px;border-radius:38px;padding:9px;background:#10201F;box-shadow:0 24px 50px rgba(8,64,63,.35),inset 0 0 0 2px #2A3F3D;position:relative}
-.fone::before{content:"";position:absolute;left:50%;top:14px;transform:translateX(-50%);width:70px;height:18px;border-radius:12px;background:#10201F;z-index:2}
-.fone img{border-radius:30px;width:100%;aspect-ratio:390/844;object-fit:cover;object-position:top}
+/* Recursos (bento) */
+.rec{background:var(--ink);color:#fff;border-radius:48px;margin:0 14px}
+.rec h2,.rec h3{color:#fff}.rec .cab p{color:#C3C6E2}.rec .rot{background:rgba(255,255,255,.12);color:var(--amarelo)}
+.grade{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.rc{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:28px}
+.rc .ic{display:grid;place-items:center;width:54px;height:54px;border-radius:18px;background:var(--grad);color:#2A0D05;margin-bottom:18px}
+.rc p{margin:0;color:#C3C6E2;font-size:.98rem}
+@media(min-width:900px){.rc.g{grid-column:span 2;display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:end;padding-bottom:0;overflow:hidden}}
+.rc .mini{width:200px;border-radius:28px 28px 0 0;padding:8px 8px 0;background:#000;margin:20px auto 0}
+.rc .mini img{border-radius:21px 21px 0 0;width:100%;aspect-ratio:390/470;object-fit:cover;object-position:top}
 
-/* Galeria */
-.por-dentro{background:linear-gradient(180deg,#E7F4F1,var(--creme))}
-.galeria{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:44px}
-.galeria figure{margin:0;text-align:center;max-width:250px}
-.galeria figcaption{margin-top:16px;font-weight:800}
-.galeria figcaption span{display:block;font-weight:600;color:var(--muted);font-size:.95rem}
-.galeria .fone:nth-child(odd){transform:none}
-@media(min-width:900px){.galeria figure:nth-child(2n){margin-top:40px}}
+/* Fases */
+.fases{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));counter-reset:f}
+.fase{position:relative;background:var(--card);border:1px solid var(--linha);border-radius:30px;padding:30px;overflow:hidden}
+.fase::before{counter-increment:f;content:"0" counter(f);position:absolute;right:20px;top:6px;font:800 5rem/1 var(--head);color:var(--pessego)}
+.fase:nth-child(even)::before{color:var(--lilas)}
+.fase .d{display:inline-block;background:var(--ink);color:#fff;font:700 .8rem var(--head);padding:6px 14px;border-radius:999px;margin-bottom:60px}
+.fase p{color:var(--muted);margin:0}
 
-/* Boneco 3D */
-.boneco{background:var(--teal-esc);color:#fff;overflow:hidden}
-.boneco .wrap{display:grid;gap:36px;align-items:center}
-.boneco h2{color:#fff} .boneco .kicker{color:var(--ouro)} .boneco .lead{color:#DDF2EF}
-.figs{display:flex;gap:14px;justify-content:center}
-.figs div{width:min(210px,31vw);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#EAF6F3,#fff);box-shadow:0 20px 40px rgba(0,0,0,.35)}
-.figs div:nth-child(2){transform:translateY(-22px)}
-.figs img{aspect-ratio:9/13;object-fit:cover;object-position:center 20%}
-.angulos{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.angulos span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:8px 18px;border-radius:999px;font-weight:800}
-@media(min-width:880px){.boneco .wrap{grid-template-columns:1fr 1fr}}
-
-/* Programa em fases */
-.fases{display:grid;gap:16px;margin-top:40px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
-.fase{position:relative;background:#fff;border:1px solid var(--linha);border-radius:26px;padding:26px;box-shadow:0 12px 30px rgba(8,64,63,.08)}
-.fase .dias{display:inline-block;background:var(--menta);color:var(--teal-esc);font-weight:800;border-radius:999px;padding:5px 14px;font-size:.88rem;margin-bottom:12px}
-.fase .n{position:absolute;right:20px;top:10px;font:800 4.6rem/1 var(--serif);color:var(--menta)}
-.fase h3{position:relative}
-.fase p{color:var(--muted);margin:0;position:relative}
-
-/* Dia típico */
-.dia{background:#fff}
-.timeline{list-style:none;margin:34px auto 0;padding:0;max-width:640px;display:grid;gap:12px}
-.timeline li{display:flex;align-items:center;gap:16px;background:var(--creme);border:1px solid var(--linha);border-radius:20px;padding:14px 18px;font-weight:700}
-.timeline .tm{flex:none;min-width:74px;text-align:center;background:var(--teal);color:#fff;border-radius:14px;padding:6px 10px;font:800 1.05rem var(--serif)}
-.timeline .desc{background:#FFF1E4;border-color:#F4C99F}.timeline .desc .tm{background:var(--laranja);color:#3A1500}
-.timeline small{display:block;font-weight:600;color:var(--muted)}
-
-/* Benefícios */
-.beneficios{display:grid;gap:16px;margin-top:40px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-.ben{display:flex;gap:16px;background:#fff;border:1px solid var(--linha);border-radius:24px;padding:24px}
-.ben .ic{flex:none;display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#D7F0EB,#BFE5DE);color:var(--teal-esc)}
-.ben h3{font-size:1.2rem;margin-bottom:.25rem}.ben p{margin:0;color:var(--muted);font-size:.98rem}
-
-/* Profissional (aparece só se configurado no script no fim da página) */
-.prof{background:linear-gradient(135deg,#FFF6E6,#FFEBD0)}
-.prof .caixa{display:grid;gap:26px;align-items:center;background:#fff;border-radius:30px;padding:30px;box-shadow:0 14px 40px rgba(122,74,7,.12)}
-.prof img{border-radius:24px;width:220px;aspect-ratio:1;object-fit:cover;margin-inline:auto}
-@media(min-width:760px){.prof .caixa{grid-template-columns:240px 1fr}}
+/* Dia */
+.dia .tl{max-width:680px;margin:0 auto;display:grid;gap:12px;list-style:none;padding:0}
+.dia li{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--linha);border-radius:24px;padding:16px 20px;font-weight:700}
+.dia li .t{flex:none;min-width:84px;text-align:center;background:var(--ink);color:#fff;font:700 1rem var(--head);padding:9px 12px;border-radius:14px}
+.dia li.d{background:var(--pessego);border-color:#FFD2B0}.dia li.d .t{background:var(--grad);color:#2A0D05}
+.dia li small{display:block;font-weight:500;color:var(--muted)}
 
 /* Oferta */
-.oferta{background:linear-gradient(145deg,#052F31,#0A5A58 60%,#17A398 140%);color:#fff;text-align:center}
-.oferta h2{color:#fff}
-.oferta .lista{list-style:none;padding:0;margin:26px auto 30px;display:grid;gap:12px;max-width:520px;text-align:left}
-.oferta .lista li{display:flex;gap:12px;font-weight:700;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:14px 18px}
-.oferta .lista svg{color:var(--ouro);flex:none;margin-top:3px}
-.seguro{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;margin-top:22px;font-weight:700;font-size:.92rem;color:#CFEDE8}
-.seguro span{display:inline-flex;gap:8px;align-items:center}
+.oferta .cx{background:linear-gradient(135deg,#14162B,#2B2E6E 70%,#4B3FB8);color:#fff;border-radius:48px;padding:64px 30px;text-align:center;position:relative;overflow:hidden}
+.oferta .cx::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(255,154,61,.35);filter:blur(80px);right:-120px;top:-140px}
+.oferta .cx>*{position:relative}
+.oferta h2{color:#fff}.oferta p.l{font-size:1.2rem;color:#D4D6EE;max-width:34em;margin:0 auto 30px}
+.oferta ul{list-style:none;padding:0;margin:0 auto 38px;display:grid;gap:12px;max-width:500px;text-align:left}
+.oferta li{display:flex;gap:14px;align-items:center;font-weight:700;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:15px 20px}
+.oferta li i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--grad);color:#2A0D05;font-style:normal;font-weight:800}
+.oferta .seg{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:center;margin-top:26px;font-size:.92rem;color:#C9CBE8;font-weight:500}
 
 /* FAQ */
-.faq-lista{max-width:780px;margin:36px auto 0;display:grid;gap:12px}
-details{background:#fff;border:1px solid var(--linha);border-radius:20px;overflow:hidden}
-summary{cursor:pointer;list-style:none;padding:20px 22px;font-weight:800;font-size:1.1rem;display:flex;justify-content:space-between;gap:14px;align-items:center;min-height:68px}
+.faq{max-width:800px;margin:0 auto;display:grid;gap:12px}
+details{background:#fff;border:1px solid var(--linha);border-radius:24px}
+summary{cursor:pointer;list-style:none;padding:22px 26px;font:700 1.08rem var(--head);display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:72px;letter-spacing:-.01em}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--menta);color:var(--teal-esc);font-size:1.4rem;transition:transform .2s}
-details[open] summary::after{transform:rotate(45deg)}
-details p{padding:0 22px 20px;margin:0;color:var(--muted)}
+summary::after{content:"+";flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--lilas);color:var(--lilas2);font-size:1.5rem;transition:transform .25s}
+details[open] summary::after{transform:rotate(45deg);background:var(--grad);color:#2A0D05}
+details p{padding:0 26px 24px;margin:0;color:var(--muted)}
 
-/* Rodapé */
-footer{background:#041F20;color:#B9D5D1;padding:40px 0 120px;font-size:.88rem}
-footer p{max-width:80ch}
-footer strong{color:#fff}
+footer{padding:50px 0 130px;color:var(--muted);font-size:.85rem}
+footer p{max-width:84ch}footer strong{color:var(--ink)}
 
-/* Barra fixa no celular */
-.barra{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(5,47,49,.96);backdrop-filter:blur(10px);display:none;transform:translateY(110%);transition:transform .3s}
-.barra.on{transform:none}
-.barra .cta{width:100%;min-height:64px}
-@media(max-width:820px){.barra{display:block}}
+/* Barra fixa mobile */
+.barra{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;transform:translateY(160%);transition:transform .35s;display:none}
+.barra.on{transform:none}.barra .cta{width:100%;min-height:66px;box-shadow:0 20px 40px -10px rgba(255,94,77,.7)}
+@media(max-width:860px){.barra{display:block}}
 
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s}
-.reveal.vis{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+.rev{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rev.v{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.rev{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
-<header class="topo">
+<header class="topo" id="topo-barra">
   <div class="wrap">
-    <a class="marca" href="#topo" aria-label="Desafio 31 Dias"><i>31</i><span>Desafio 31 Dias</span></a>
-    <a class="cta" data-compra href="#">QUERO COMEÇAR</a>
+    <a class="marca" href="#inicio" aria-label="Desafio 31 Dias"><i>31</i><span>Desafio 31 Dias</span></a>
+    <a class="cta" data-compra href="#">Quero começar <span class="seta" aria-hidden="true">→</span></a>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="hero" id="topo" style="padding-bottom:0">
+<section class="hero" id="inicio">
   <div class="wrap">
-    <div class="hero-txt">
-      <span class="selo">PARA QUEM TEM 50 ANOS OU MAIS</span>
-      <h1>Seu corpo em <em>movimento</em>, todos os dias, em poucos minutos.</h1>
-      <p class="sub">Uma rotina guiada de 31 dias, com exercícios simples, passo a passo, para você se movimentar com mais confiança e no seu ritmo.</p>
-      <ul class="checks">
-        <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Treinos de 5 a 8 minutos por dia</li>
-        <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Boneco 3D que mostra cada movimento</li>
-        <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Sem equipamentos, em casa, no celular</li>
-      </ul>
-      <a class="cta cta-grande cta-pulso" data-compra href="#">
-        QUERO COMEÇAR AGORA
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <p class="micro">Pagamento seguro pela Kiwify · Acesso após a confirmação</p>
+    <div>
+      <span class="pilula"><b>NOVO</b> Rotina guiada de 31 dias</span>
+      <h1>Mexa o corpo todo dia. Em <span class="dest">poucos minutos.</span></h1>
+      <p class="sub">Treinos curtos de 5 a 8 minutos, guiados passo a passo no seu celular. Sem equipamentos, sem academia e sem complicação, para qualquer idade e qualquer nível.</p>
+      <a class="cta cta-g" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a>
+      <p class="nota-cta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Pagamento seguro pela Kiwify · Direito de arrependimento de 7 dias, conforme a lei</p>
+      <div class="provas">
+        <div class="prova"><b>31</b><span>treinos guiados</span></div>
+        <div class="prova"><b>5–8 min</b><span>por dia</span></div>
+        <div class="prova"><b>0</b><span>equipamentos</span></div>
+      </div>
     </div>
-    <div class="hero-img">
-      <div class="card3d"><img src="img/fig-bracos.jpg" alt="Boneco 3D de uma pessoa mais velha fazendo elevação suave dos braços" width="900" height="1100"></div>
-      <div class="flutua f1"><b>31</b> dias guiados</div>
-      <div class="flutua f2">Gire e veja em <b>3D</b></div>
+    <div class="palco" aria-hidden="true">
+      <div class="fone b"><img src="img/app-calendario.jpg" alt="" width="540" height="1169"></div>
+      <div class="fone a"><img src="img/app-progresso.jpg" alt="" width="540" height="1169"></div>
+      <div class="chip c1"><span class="e">🔥</span><div>Sequência de 9 dias<small>Você está criando o hábito</small></div></div>
+      <div class="chip c2"><span class="e">✅</span><div>Treino concluído<small>Mais um dia feito</small></div></div>
     </div>
   </div>
 </section>
 
-<div class="faixa">
-  <div class="wrap"><ul>
-    <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Só 5 a 8 minutos por dia</li>
-    <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Funciona no celular</li>
-    <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Compra segura</li>
-    <li><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg>Acesso imediato</li>
-  </ul></div>
-</div>
+<div class="faixa" aria-hidden="true"><div class="faixa-trilho">
+  <span>Treinos de 5 a 8 minutos</span><span>Direto no celular</span><span>Sem equipamentos</span><span>Do seu jeito</span><span>31 dias guiados</span><span>Certificado de conclusão</span>
+  <span>Treinos de 5 a 8 minutos</span><span>Direto no celular</span><span>Sem equipamentos</span><span>Do seu jeito</span><span>31 dias guiados</span><span>Certificado de conclusão</span>
+</div></div>
 
-<!-- IDENTIFICAÇÃO -->
-<section class="dores">
+<!-- PARA QUEM É -->
+<section>
   <div class="wrap">
-    <div class="centro reveal">
-      <span class="kicker">Você se reconhece?</span>
-      <h2>Quando o corpo fica parado, o dia a dia fica mais difícil</h2>
-      <p class="lead">Muita gente depois dos 50 sente o corpo mais rígido e sem saber por onde começar a se mexer de novo.</p>
+    <div class="cab c rev">
+      <span class="rot">Para quem é</span>
+      <h2>Feito para quem quer se mexer mais</h2>
+      <p>Não importa a idade nem de onde você parte. Se você quer criar o hábito de se movimentar, esta rotina foi pensada para você.</p>
     </div>
-    <div class="grid-dores">
-      <div class="dor reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v9h10M7 13v7M17 13v7M7 17h10"/></svg></span><p>Passa muitas horas sentado(a) e sente o corpo “travado”.</p></div>
-      <div class="dor reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p>Acha que treino é coisa longa e não tem tempo.</p></div>
-      <div class="dor reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><p>Tem receio de exercícios difíceis ou complicados demais.</p></div>
-      <div class="dor reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a6 6 0 016-6h8M15 3l3 3-3 3M20 12a6 6 0 01-6 6H6M9 21l-3-3 3-3"/></svg></span><p>Já tentou começar, mas desistiu por falta de uma rotina.</p></div>
+    <div class="bento">
+      <div class="bc rev"><div class="em">🪑</div><h3>Passa o dia sentado(a)</h3><p>Trabalho, estudo, TV... pausas curtas e guiadas para tirar o corpo da cadeira.</p></div>
+      <div class="bc rev"><div class="em">⏱️</div><h3>Vive sem tempo</h3><p>Nada de treino de uma hora. São só alguns minutos, em qualquer horário.</p></div>
+      <div class="bc rev"><div class="em">🌱</div><h3>Está começando do zero</h3><p>Exercícios simples e progressão gradual, sem pressa e sem cobrança.</p></div>
+      <div class="bc rev"><div class="em">🔁</div><h3>Quer criar constância</h3><p>Calendário, sequência e conquistas ajudam a manter o ritmo até o dia 31.</p></div>
     </div>
-    <div class="virada reveal">
-      <h3>E se bastassem alguns minutos por dia?</h3>
-      <p>O Desafio 31 Dias foi pensado para você criar o hábito de se movimentar, com treinos curtos, simples e guiados do começo ao fim. Sem pressa, sem cobrança e sem culpa.</p>
+  </div>
+</section>
+
+<!-- CONTRASTE (aparece só se as duas fotos existirem em img/) -->
+<section class="contraste" id="contraste" hidden>
+  <div class="wrap">
+    <div class="cab c rev">
+      <span class="rot">O dia a dia</span>
+      <h2>Do dia parado ao dia em movimento</h2>
+      <p>Arraste e veja a diferença que um pouco de movimento faz na rotina.</p>
     </div>
+    <div class="cmp rev" id="cmp" style="--p:50%">
+      <img id="img-depois" alt="Pessoa em movimento, em atividade" src="" width="1200" height="900">
+      <img class="topo-img" id="img-antes" alt="Pessoa parada, sentada" src="" width="1200" height="900">
+      <span class="etq e1">Parado</span><span class="etq e2">Em movimento</span>
+      <div class="linha"></div>
+      <label class="sr" for="cmp-r">Comparar as duas imagens</label>
+      <input id="cmp-r" type="range" min="0" max="100" value="50">
+    </div>
+    <p class="leg">Imagens ilustrativas. Não representam resultado garantido; cada pessoa é diferente.</p>
   </div>
 </section>
 
 <!-- COMO FUNCIONA -->
 <section>
   <div class="wrap">
-    <div class="centro reveal">
-      <span class="kicker">Como funciona</span>
-      <h2>Simples assim: abrir, apertar e acompanhar</h2>
-      <p class="lead">Você não precisa decidir nada. O aplicativo conduz o seu treino do começo ao fim.</p>
+    <div class="cab c rev">
+      <span class="rot">Como funciona</span>
+      <h2>Abrir, apertar e acompanhar</h2>
+      <p>Você não precisa decidir nada. O aplicativo conduz o treino do começo ao fim.</p>
     </div>
     <div class="passos">
-      <article class="passo reveal">
-        <div><div class="num">1</div><h3>Veja o treino do dia</h3><p>Ao abrir, você já vê qual é o treino de hoje, quantos minutos leva e quais exercícios vão acontecer. Um botão grande leva você direto para o começo.</p></div>
-        <div class="fone"><img src="img/app-home.jpg" alt="Tela inicial do aplicativo com o progresso e o treino de hoje"></div>
-      </article>
-      <article class="passo reveal">
-        <div><div class="num">2</div><h3>Siga o boneco 3D</h3><p>Cada exercício tem um cronômetro, instruções curtas e um boneco 3D fazendo o movimento. Você pode girar o boneco e ver de frente, de lado ou de costas. Depois vem um descanso automático.</p></div>
-        <div class="fone"><img src="img/app-treino.jpg" alt="Tela do treino com boneco 3D e cronômetro"></div>
-      </article>
-      <article class="passo reveal">
-        <div><div class="num">3</div><h3>Acompanhe seu progresso</h3><p>Marque cada dia concluído no calendário, veja sua sequência e ganhe conquistas pelo caminho. Perdeu um dia? Sem problema: seu progresso fica salvo e você continua de onde parou.</p></div>
-        <div class="fone"><img src="img/app-calendario.jpg" alt="Calendário de 31 dias com dias concluídos"></div>
-      </article>
+      <article class="passo rev"><span class="n">PASSO 01</span><h3>Veja o treino do dia</h3><p>Ao abrir, você já vê o treino de hoje, o tempo e os exercícios. Um botão grande leva direto ao começo.</p><div class="mini"><img src="img/app-progresso.jpg" alt="Tela inicial com o progresso e o treino de hoje" loading="lazy" width="540" height="1169"></div></article>
+      <article class="passo rev"><span class="n">PASSO 02</span><h3>Siga o treino guiado</h3><p>Cada exercício tem cronômetro, instruções curtas e descanso automático entre eles. É só acompanhar.</p><div class="mini"><img src="img/app-dia.jpg" alt="Lista de exercícios do dia" loading="lazy" width="540" height="1169"></div></article>
+      <article class="passo rev"><span class="n">PASSO 03</span><h3>Acompanhe sua evolução</h3><p>Marque cada dia no calendário e acompanhe a sequência. Perdeu um dia? Seu progresso fica salvo.</p><div class="mini"><img src="img/app-calendario.jpg" alt="Calendário dos 31 dias" loading="lazy" width="540" height="1169"></div></article>
     </div>
-    <p class="centro reveal" style="margin-top:40px"><a class="cta cta-grande" data-compra href="#">QUERO COMEÇAR AGORA</a></p>
+    <p style="text-align:center;margin-top:46px"><a class="cta cta-g" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
-<!-- BONECO 3D -->
-<section class="boneco">
+<!-- RECURSOS -->
+<section class="rec">
   <div class="wrap">
-    <div class="reveal">
-      <span class="kicker">Demonstração em 3D</span>
-      <h2>Veja o movimento de todos os ângulos</h2>
-      <p class="lead">Em vez de uma foto parada, você vê o movimento acontecendo. Arraste com o dedo para girar o boneco e entenda cada exercício antes de fazer.</p>
-      <div class="angulos"><span>De frente</span><span>De lado</span><span>De costas</span><span>Câmera lenta</span></div>
+    <div class="cab c rev">
+      <span class="rot">O que vem no desafio</span>
+      <h2>Tudo o que você precisa, num só lugar</h2>
     </div>
-    <div class="figs reveal">
-      <div><img src="img/fig-rotacao.jpg" alt="Boneco 3D fazendo rotação suave do tronco"></div>
-      <div><img src="img/fig-bracos.jpg" alt="Boneco 3D elevando os braços"></div>
-      <div><img src="img/fig-equilibrio.jpg" alt="Boneco 3D em exercício de equilíbrio com apoio"></div>
+    <div class="grade">
+      <div class="rc g rev"><div><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div><h3>Conquistas e sequência</h3><p>Ganhe medalhas pelo caminho, acompanhe sua sequência e veja o seu progresso crescer a cada treino concluído.</p></div><div class="mini"><img src="img/app-conquistas.jpg" alt="Tela de conquistas do aplicativo" loading="lazy" width="540" height="1169"></div></div>
+      <div class="rc rev"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg></div><h3>31 treinos guiados</h3><p>Um para cada dia, com cronômetro e descanso automático.</p></div>
+      <div class="rc rev"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.8"/><path d="M12 8l-2 5 3 2 1 5M12 8l3 2 3 1M10 13l-3 3"/></svg></div><h3>Demonstração animada</h3><p>Veja cada movimento em 3D antes de fazer e gire para ver de outros ângulos.</p></div>
+      <div class="rc rev"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0012 3z"/></svg></div><h3>Dicas para a rotina</h3><p>Conteúdos curtos sobre postura, pausas, hidratação e sono.</p></div>
+      <div class="rc rev"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H5v1a3 3 0 003 3M16 6h3v1a3 3 0 01-3 3M12 13v4M8 20h8M10 17h4"/></svg></div><h3>Certificado de conclusão</h3><p>Ao terminar os 31 dias, você recebe o seu certificado digital.</p></div>
+      <div class="rc rev"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></div><h3>Fácil para todo mundo</h3><p>Letras grandes, botões grandes e telas simples. Funciona no celular, tablet e computador.</p></div>
     </div>
   </div>
 </section>
 
-<!-- PROGRAMA -->
+<!-- FASES -->
 <section>
   <div class="wrap">
-    <div class="centro reveal">
-      <span class="kicker">O programa</span>
+    <div class="cab c rev">
+      <span class="rot">O programa</span>
       <h2>4 fases, com progressão gradual</h2>
-      <p class="lead">Os treinos não são todos iguais. Você começa leve e avança aos poucos, no ritmo certo para criar o hábito.</p>
+      <p>Os treinos não são todos iguais. Você começa leve e avança aos poucos.</p>
     </div>
     <div class="fases">
-      <div class="fase reveal"><span class="n">1</span><span class="dias">Dias 1 a 7</span><h3>Adaptação</h3><p>Movimentos leves para conhecer a rotina e acostumar o corpo.</p></div>
-      <div class="fase reveal"><span class="n">2</span><span class="dias">Dias 8 a 14</span><h3>Consistência</h3><p>Mantendo o hábito, com um pouco mais de variedade.</p></div>
-      <div class="fase reveal"><span class="n">3</span><span class="dias">Dias 15 a 21</span><h3>Evolução</h3><p>Progressão gradual, sempre respeitando seus limites.</p></div>
-      <div class="fase reveal"><span class="n">4</span><span class="dias">Dias 22 a 31</span><h3>Consolidação</h3><p>Fixando a rotina que você construiu. No fim, certificado de conclusão.</p></div>
+      <div class="fase rev"><span class="d">Dias 1 a 7</span><h3>Adaptação</h3><p>Movimentos leves para conhecer a rotina e criar o hábito.</p></div>
+      <div class="fase rev"><span class="d">Dias 8 a 14</span><h3>Consistência</h3><p>Mantendo o ritmo, com um pouco mais de variedade.</p></div>
+      <div class="fase rev"><span class="d">Dias 15 a 21</span><h3>Evolução</h3><p>Progressão gradual, sempre respeitando seus limites.</p></div>
+      <div class="fase rev"><span class="d">Dias 22 a 31</span><h3>Consolidação</h3><p>Fixando a rotina que você construiu, com certificado ao final.</p></div>
     </div>
   </div>
 </section>
 
-<!-- DIA TÍPICO -->
-<section class="dia">
+<!-- UM DIA -->
+<section class="dia" style="padding-top:20px">
   <div class="wrap">
-    <div class="centro reveal">
-      <span class="kicker">Um dia no desafio</span>
-      <h2>Como são esses poucos minutos</h2>
-      <p class="lead">Um exemplo de como o seu treino acontece. Tudo guiado, sem você precisar contar tempo.</p>
-    </div>
-    <ol class="timeline reveal">
-      <li><span class="tm">00:30</span><span>Respiração e postura<small>Para começar com calma</small></span></li>
-      <li class="desc"><span class="tm">Descanso</span><span>Respire e prepare-se<small>Contagem automática</small></span></li>
-      <li><span class="tm">00:30</span><span>Círculos suaves com os ombros<small>Mobilidade</small></span></li>
-      <li class="desc"><span class="tm">Descanso</span><span>Respire e prepare-se<small>Contagem automática</small></span></li>
-      <li><span class="tm">00:30</span><span>Inclinação lateral suave<small>Alongamento suave</small></span></li>
-      <li class="desc"><span class="tm">Descanso</span><span>E assim até o final<small>Tela de treino concluído</small></span></li>
+    <div class="cab c rev"><span class="rot">Um dia no desafio</span><h2>Como são esses poucos minutos</h2><p>Tudo guiado. Você não precisa contar tempo nem decidir o que vem depois.</p></div>
+    <ol class="tl rev">
+      <li><span class="t">00:30</span><span>Respiração e postura<small>Para começar com calma</small></span></li>
+      <li class="d"><span class="t">Pausa</span><span>Respire e prepare-se<small>Contagem automática</small></span></li>
+      <li><span class="t">00:30</span><span>Círculos suaves com os ombros<small>Mobilidade</small></span></li>
+      <li class="d"><span class="t">Pausa</span><span>Respire e prepare-se<small>Contagem automática</small></span></li>
+      <li><span class="t">00:30</span><span>Inclinação lateral suave<small>Alongamento suave</small></span></li>
+      <li class="d"><span class="t">Fim</span><span>Treino concluído<small>Seu progresso é atualizado</small></span></li>
     </ol>
   </div>
 </section>
 
-<!-- BENEFÍCIOS -->
-<section>
-  <div class="wrap">
-    <div class="centro reveal">
-      <span class="kicker">O que você recebe</span>
-      <h2>Tudo pensado para ser fácil</h2>
-    </div>
-    <div class="beneficios">
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg></span><div><h3>31 treinos guiados</h3><p>Um treino para cada dia, com cronômetro e descanso automático.</p></div></div>
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.8"/><path d="M12 8l-2 5 3 2 1 5M12 8l3 2 3 1M10 13l-3 3"/></svg></span><div><h3>Boneco 3D giratório</h3><p>Veja cada movimento de frente, de lado e de costas.</p></div></div>
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><h3>Calendário e sequência</h3><p>Acompanhe seu progresso dia a dia e ganhe conquistas.</p></div></div>
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0012 3z"/></svg></span><div><h3>Dicas para a rotina</h3><p>Conteúdos curtos sobre postura, pausas, hidratação e sono.</p></div></div>
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></span><div><h3>Certificado de conclusão</h3><p>Ao terminar os 31 dias, você recebe o seu certificado digital.</p></div></div>
-      <div class="ben reveal"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><div><h3>Letras grandes e fácil de usar</h3><p>Feito para o público 50+: botões grandes e telas simples.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- PROFISSIONAL (preenchido via script) -->
-<section class="prof" id="profissional" hidden>
-  <div class="wrap"><div class="caixa reveal">
-    <img id="prof-foto" alt="" width="220" height="220">
-    <div><span class="kicker">Orientação profissional</span><h2 id="prof-nome"></h2><p id="prof-registro" style="font-weight:800"></p><p id="prof-texto"></p></div>
+<!-- OFERTA -->
+<section class="oferta" id="oferta">
+  <div class="wrap"><div class="cx rev">
+    <span class="rot" style="background:rgba(255,255,255,.14);color:var(--amarelo)">Comece hoje</span>
+    <h2>Seu primeiro treino pode ser ainda hoje</h2>
+    <p class="l">São só alguns minutos por dia. Garanta o seu acesso ao Desafio 31 Dias.</p>
+    <ul>
+      <li><i>✓</i>31 treinos guiados de 5 a 8 minutos</li>
+      <li><i>✓</i>Demonstração animada de cada exercício</li>
+      <li><i>✓</i>Calendário, sequência e conquistas</li>
+      <li><i>✓</i>Dicas para a rotina e certificado final</li>
+    </ul>
+    <a class="cta cta-g" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a>
+    <div class="seg"><span>🔒 Pagamento seguro pela Kiwify</span><span>↩️ Direito de arrependimento de 7 dias, conforme a lei</span></div>
   </div></div>
 </section>
 
-<!-- OFERTA -->
-<section class="oferta" id="oferta">
-  <div class="wrap">
-    <span class="kicker" style="color:var(--ouro)">Comece hoje</span>
-    <h2>Seu primeiro treino pode ser ainda hoje</h2>
-    <p class="lead" style="margin-inline:auto;color:#DDF2EF">São só alguns minutos por dia. Garanta o seu acesso ao Desafio 31 Dias.</p>
-    <ul class="lista">
-      <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>31 treinos guiados de 5 a 8 minutos</li>
-      <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Demonstração em 3D de cada exercício</li>
-      <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Calendário, sequência e conquistas</li>
-      <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dicas para a rotina e certificado final</li>
-    </ul>
-    <a class="cta cta-grande cta-pulso" data-compra href="#">
-      QUERO COMEÇAR AGORA
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </a>
-    <div class="seguro">
-      <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Pagamento seguro pela Kiwify</span>
-      <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>Direito de arrependimento de 7 dias, conforme a lei</span>
-    </div>
-  </div>
-</section>
-
 <!-- FAQ -->
-<section>
+<section style="padding-top:30px">
   <div class="wrap">
-    <div class="centro reveal"><span class="kicker">Dúvidas frequentes</span><h2>Perguntas que as pessoas fazem</h2></div>
-    <div class="faq-lista reveal">
+    <div class="cab c rev"><span class="rot">Dúvidas</span><h2>Perguntas frequentes</h2></div>
+    <div class="faq rev">
       <details><summary>Preciso de algum equipamento?</summary><p>Não. Os exercícios são feitos em casa, sem equipamentos. Em alguns movimentos, o aplicativo sugere ter uma cadeira firme ou uma bancada por perto como apoio.</p></details>
-      <details><summary>Quanto tempo por dia?</summary><p>Entre 5 e 8 minutos, dependendo da fase do desafio. O aplicativo conduz tudo, incluindo os descansos.</p></details>
-      <details><summary>Funciona no celular?</summary><p>Sim. O aplicativo foi pensado primeiro para o celular, e também funciona em tablet e computador. As letras e os botões são grandes para facilitar a leitura.</p></details>
-      <details><summary>Eu sinto dores ou tenho alguma condição de saúde. Posso fazer?</summary><p>O Desafio 31 Dias é uma rotina de atividade física e educação geral e não substitui a avaliação de um profissional de saúde. Se você tem dor intensa, condição de saúde, lesão ou cirurgia recente, sintomas neurológicos ou qualquer dúvida, converse com seu médico ou fisioterapeuta antes de começar. Pare se sentir dor, tontura ou desconforto.</p></details>
-      <details><summary>E se eu perder um dia?</summary><p>Sem culpa. Seu progresso fica salvo e você continua de onde parou. O aplicativo avisa: “Você não perdeu seu progresso. Continue a partir de hoje.”</p></details>
-      <details><summary>Preciso saber mexer em tecnologia?</summary><p>Não. A tela inicial é simples: você abre, vê o treino do dia e aperta um botão grande para começar.</p></details>
+      <details><summary>Quanto tempo leva por dia?</summary><p>Entre 5 e 8 minutos, dependendo da fase do desafio. O aplicativo conduz tudo, inclusive os descansos.</p></details>
+      <details><summary>Funciona no celular?</summary><p>Sim. Foi pensado primeiro para o celular e também funciona em tablet e computador.</p></details>
+      <details><summary>Tenho dores ou alguma condição de saúde. Posso fazer?</summary><p>O Desafio 31 Dias é uma rotina de atividade física e educação geral e não substitui a avaliação de um profissional de saúde. Se você tem dor intensa, condição de saúde, lesão ou cirurgia recente, sintomas neurológicos ou qualquer dúvida, converse com seu médico ou fisioterapeuta antes de começar. Pare se sentir dor, tontura ou desconforto.</p></details>
+      <details><summary>E se eu perder um dia?</summary><p>Sem culpa. Seu progresso fica salvo e você continua de onde parou.</p></details>
+      <details><summary>Preciso entender de tecnologia?</summary><p>Não. A tela inicial é simples: você abre, vê o treino do dia e aperta um botão grande para começar.</p></details>
       <details><summary>Como recebo o acesso?</summary><p>A compra é feita de forma segura pela Kiwify. Depois da confirmação do pagamento, você recebe as instruções de acesso.</p></details>
     </div>
-    <p class="centro reveal" style="margin-top:40px"><a class="cta cta-grande" data-compra href="#">QUERO COMEÇAR AGORA</a></p>
+    <p style="text-align:center;margin-top:46px"><a class="cta cta-escuro cta-g" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p><strong>Desafio 31 Dias</strong> é uma rotina de atividade física e educação geral. Este produto não é um tratamento, não promete cura nem resultados de saúde e não substitui a avaliação, o diagnóstico ou a orientação individual de médicos, fisioterapeutas ou outros profissionais de saúde.</p>
+    <p><strong>Desafio 31 Dias</strong> é uma rotina de atividade física e educação geral. Este produto não é tratamento, não promete cura nem resultados de saúde e não substitui a avaliação, o diagnóstico ou a orientação individual de médicos, fisioterapeutas ou outros profissionais de saúde.</p>
     <p>Pessoas com condições de saúde, dor intensa, sintomas neurológicos, lesões recentes ou outras situações específicas devem buscar orientação profissional antes de iniciar qualquer exercício. Interrompa a atividade em caso de dor, tontura ou mal-estar. Os resultados variam de pessoa para pessoa.</p>
     <p>© <span id="ano"></span> Desafio 31 Dias. Todos os direitos reservados.</p>
   </div>
 </footer>
 
-<div class="barra" id="barra"><a class="cta cta-pulso" data-compra href="#">QUERO COMEÇAR AGORA</a></div>
+<div class="barra" id="barra"><a class="cta" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a></div>
 
 <script>
 /* ===== CONFIGURAÇÃO ===== */
 const LINK_COMPRA = "https://pay.kiwify.com.br/AeLsazF";
-
-/* Preencha SOMENTE se o profissional realmente validou e orienta o conteúdo, com autorização por escrito.
-   Enquanto for null, a seção "Orientação profissional" fica oculta. */
-const PROFISSIONAL = null;
-/* Exemplo:
-const PROFISSIONAL = { nome: "Nome do Profissional", registro: "Fisioterapeuta · CREFITO-0 00000-F",
-  foto: "img/profissional.jpg", texto: "Texto confirmado e autorizado pelo profissional." }; */
+/* Slider "Parado → Em movimento": coloque duas fotos SUAS (ou de banco de imagens com licença comercial)
+   em vendas/img/ com estes nomes. Se não existirem, a seção fica escondida.
+   Use imagens de contraste de rotina (parado x ativo). Não use "antes e depois" de resultado de saúde
+   que não seja real e autorizado. */
+const FOTO_PARADO = "img/foto-parado.jpg";
+const FOTO_MOVIMENTO = "img/foto-movimento.jpg";
 /* ======================== */
 
 document.querySelectorAll("[data-compra]").forEach(a => { a.href = LINK_COMPRA; a.target = "_blank"; a.rel = "noopener"; });
 document.getElementById("ano").textContent = new Date().getFullYear();
 
-if (PROFISSIONAL) {
-  const s = document.getElementById("profissional"); s.hidden = false;
-  document.getElementById("prof-nome").textContent = PROFISSIONAL.nome;
-  document.getElementById("prof-registro").textContent = PROFISSIONAL.registro;
-  document.getElementById("prof-texto").textContent = PROFISSIONAL.texto;
-  const f = document.getElementById("prof-foto"); f.src = PROFISSIONAL.foto; f.alt = PROFISSIONAL.nome;
+/* Seção de contraste: só aparece se as duas imagens carregarem */
+(function(){
+  const a = new Image(), b = new Image(); let ok = 0;
+  const pronto = () => { if (++ok < 2) return;
+    document.getElementById("img-antes").src = FOTO_PARADO; document.getElementById("img-depois").src = FOTO_MOVIMENTO;
+    const s = document.getElementById("contraste"); s.hidden = false; iniciaSlider(); document.querySelectorAll("#contraste .rev").forEach(el => io.observe(el)); };
+  a.onload = b.onload = pronto; a.src = FOTO_PARADO; b.src = FOTO_MOVIMENTO;
+})();
+function iniciaSlider(){
+  const box = document.getElementById("cmp"), r = document.getElementById("cmp-r"); let usou = false;
+  const set = v => box.style.setProperty("--p", v + "%");
+  r.addEventListener("input", () => { usou = true; set(r.value); });
+  new IntersectionObserver((es, o) => es.forEach(e => { if (!e.isIntersecting || usou) return; o.disconnect();
+    let t0 = null; const alvo = [50, 12, 88, 50];
+    (function anima(t){ if (usou) return; t0 = t0 || t; const k = (t - t0) / 2600, i = Math.min(2, Math.floor(k * 3)), f = k * 3 - i;
+      if (k >= 1) { set(50); return; } const e2 = f < .5 ? 2*f*f : 1 - Math.pow(-2*f+2,2)/2; set(alvo[i] + (alvo[i+1]-alvo[i]) * e2); requestAnimationFrame(anima); })(performance.now());
+  }), { threshold: .6 }).observe(box);
 }
 
-/* Revelar ao rolar + barra de compra fixa no celular */
-const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .12 });
-document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-const barra = document.getElementById("barra"), oferta = document.getElementById("oferta"), hero = document.getElementById("topo");
-function atualizaBarra() {
-  const y = window.scrollY, h = hero.offsetHeight, o = oferta.getBoundingClientRect();
-  const naOferta = o.top < innerHeight && o.bottom > 0;
-  barra.classList.toggle("on", y > h * .8 && !naOferta);
-}
-addEventListener("scroll", atualizaBarra, { passive: true }); atualizaBarra();
+/* Revelar ao rolar, barra do topo e barra fixa no celular */
+const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("v"); io.unobserve(e.target); } }), { threshold: .12 });
+document.querySelectorAll(".rev").forEach(el => io.observe(el));
+const topo = document.getElementById("topo-barra"), barra = document.getElementById("barra"), oferta = document.getElementById("oferta"), hero = document.getElementById("inicio");
+function scroll(){ const y = scrollY, o = oferta.getBoundingClientRect();
+  topo.classList.toggle("sol", y > 30);
+  barra.classList.toggle("on", y > hero.offsetHeight * .6 && !(o.top < innerHeight && o.bottom > 0)); }
+addEventListener("scroll", scroll, { passive: true }); scroll();
 </script>
 </body>
 </html>
