@@ -86,6 +86,10 @@ section{padding:84px 0;position:relative}
 @keyframes rola{to{transform:translateX(-50%)}}
 
 /* Títulos */
+.selos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.selos>div{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--linha);border-radius:22px;padding:16px 20px;font-weight:700}
+.selos b{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:var(--pessego);font-size:1.3rem}
+.selos small{display:block;font-weight:500;color:var(--muted);font-size:.82rem;line-height:1.3}
 .rot{display:inline-block;font:700 .82rem var(--head);letter-spacing:.14em;text-transform:uppercase;color:var(--lilas2);background:var(--lilas);padding:7px 16px;border-radius:999px;margin-bottom:18px}
 .cab{max-width:760px;margin-bottom:46px}.cab.c{margin-inline:auto;text-align:center}
 .cab p{font-size:1.2rem;color:var(--muted)}
@@ -100,7 +104,7 @@ section{padding:84px 0;position:relative}
 
 /* Slider antes/depois */
 .contraste{background:linear-gradient(180deg,var(--bg),#fff 20%,#fff 80%,var(--bg))}
-.cmp{position:relative;max-width:860px;margin:0 auto;border-radius:36px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 40px 80px -30px rgba(20,22,43,.5);user-select:none;background:#ddd;touch-action:pan-y}
+.cmp{position:relative;max-width:460px;margin:0 auto;border-radius:36px;overflow:hidden;aspect-ratio:2/3;box-shadow:0 40px 80px -30px rgba(20,22,43,.5);user-select:none;background:#ddd;touch-action:pan-y}
 .cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cmp .topo-img{clip-path:inset(0 calc(100% - var(--p,50%)) 0 0)}
 .cmp .linha{position:absolute;top:0;bottom:0;left:var(--p,50%);width:4px;margin-left:-2px;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.4);pointer-events:none}
@@ -108,7 +112,13 @@ section{padding:84px 0;position:relative}
 .cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
 .etq{position:absolute;bottom:18px;background:rgba(20,22,43,.78);color:#fff;font:700 .95rem var(--head);padding:9px 18px;border-radius:999px;backdrop-filter:blur(6px);pointer-events:none}
 .etq.e1{left:18px}.etq.e2{right:18px;background:var(--grad);color:#2A0D05}
-.leg{text-align:center;font-size:.85rem;color:var(--muted);margin-top:18px}
+.leg{text-align:center;font-size:.8rem;color:var(--muted);margin:18px auto 0;max-width:460px}
+.duas{display:grid;gap:44px;align-items:center}
+.lead2{font-size:1.15rem;color:var(--muted)}
+.pontos{list-style:none;padding:0;margin:0 0 30px;display:grid;gap:12px}
+.pontos li{display:flex;gap:12px;align-items:center;font-weight:700}
+.pontos i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--grad);color:#2A0D05;font-style:normal;font-weight:800;font-size:.9rem}
+@media(min-width:900px){.duas{grid-template-columns:1fr 1fr;gap:70px}}
 
 /* Como funciona */
 .passos{display:grid;gap:22px}
@@ -131,6 +141,14 @@ section{padding:84px 0;position:relative}
 .rc .mini{width:200px;border-radius:28px 28px 0 0;padding:8px 8px 0;background:#000;margin:20px auto 0}
 .rc .mini img{border-radius:21px 21px 0 0;width:100%;aspect-ratio:390/470;object-fit:cover;object-position:top}
 
+.vs{display:grid;gap:16px;max-width:900px;margin:0 auto}
+.vs .col{border-radius:32px;padding:34px 32px}
+.vs h3{font-size:1.35rem;margin-bottom:18px}
+.vs p{display:flex;gap:14px;align-items:flex-start;margin:0 0 14px;font-weight:500}
+.vs p i{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-style:normal;font-weight:800;font-size:.85rem;margin-top:2px}
+.vs .sem{background:#fff;border:1px solid var(--linha);color:var(--muted)}.vs .sem i{background:#EFE9E1;color:#8A8478}
+.vs .com{background:var(--ink);color:#fff;box-shadow:0 30px 60px -28px rgba(20,22,43,.6)}.vs .com h3{color:#fff}.vs .com i{background:var(--grad);color:#2A0D05}
+@media(min-width:760px){.vs{grid-template-columns:1fr 1fr}}
 /* Fases */
 .fases{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));counter-reset:f}
 .fase{position:relative;background:var(--card);border:1px solid var(--linha);border-radius:30px;padding:30px;overflow:hidden}
@@ -146,6 +164,10 @@ section{padding:84px 0;position:relative}
 .dia li.d{background:var(--pessego);border-color:#FFD2B0}.dia li.d .t{background:var(--grad);color:#2A0D05}
 .dia li small{display:block;font-weight:500;color:var(--muted)}
 
+.seguranca{display:flex;gap:22px;align-items:flex-start;background:#fff;border:1px solid var(--linha);border-radius:32px;padding:30px;max-width:900px;margin:0 auto;box-shadow:0 18px 44px -30px rgba(20,22,43,.4)}
+.seguranca h3{margin-bottom:.4rem}.seguranca p{margin:0;color:var(--muted)}
+.sg-ic{flex:none;display:grid;place-items:center;width:62px;height:62px;border-radius:20px;background:var(--lilas);font-size:1.8rem}
+@media(max-width:560px){.seguranca{flex-direction:column}}
 /* Oferta */
 .oferta .cx{background:linear-gradient(135deg,#14162B,#2B2E6E 70%,#4B3FB8);color:#fff;border-radius:48px;padding:64px 30px;text-align:center;position:relative;overflow:hidden}
 .oferta .cx::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(255,154,61,.35);filter:blur(80px);right:-120px;top:-140px}
@@ -216,6 +238,16 @@ footer p{max-width:84ch}footer strong{color:var(--ink)}
   <span>Treinos de 5 a 8 minutos</span><span>Direto no celular</span><span>Sem equipamentos</span><span>Do seu jeito</span><span>31 dias guiados</span><span>Certificado de conclusão</span>
 </div></div>
 
+<!-- SELOS -->
+<section style="padding:46px 0 10px">
+  <div class="wrap selos rev">
+    <div><b>🔒</b><span>Pagamento seguro<small>processado pela Kiwify</small></span></div>
+    <div><b>⚡</b><span>Acesso rápido<small>após a confirmação</small></span></div>
+    <div><b>📱</b><span>Celular, tablet e PC<small>sem instalar nada pesado</small></span></div>
+    <div><b>↩️</b><span>7 dias para desistir<small>direito previsto em lei</small></span></div>
+  </div>
+</section>
+
 <!-- PARA QUEM É -->
 <section>
   <div class="wrap">
@@ -235,21 +267,29 @@ footer p{max-width:84ch}footer strong{color:var(--ink)}
 
 <!-- CONTRASTE (aparece só se as duas fotos existirem em img/) -->
 <section class="contraste" id="contraste" hidden>
-  <div class="wrap">
-    <div class="cab c rev">
-      <span class="rot">O dia a dia</span>
-      <h2>Do dia parado ao dia em movimento</h2>
-      <p>Arraste e veja a diferença que um pouco de movimento faz na rotina.</p>
+  <div class="wrap duas">
+    <div class="rev">
+      <span class="rot">Você no dia a dia</span>
+      <h2>Quando o corpo para, o dia pesa. Com movimento, ele flui.</h2>
+      <p class="lead2">Passar horas na mesma posição cansa. A proposta do Desafio 31 Dias é simples: criar, aos poucos, o hábito de se movimentar todos os dias, em treinos curtos e guiados.</p>
+      <ul class="pontos">
+        <li><i>✓</i>Treinos de 5 a 8 minutos, sem equipamentos</li>
+        <li><i>✓</i>Progressão gradual, no seu ritmo</li>
+        <li><i>✓</i>Sem culpa: perdeu um dia, continue de onde parou</li>
+      </ul>
+      <a class="cta" data-compra href="#">Quero começar agora <span class="seta" aria-hidden="true">→</span></a>
     </div>
-    <div class="cmp rev" id="cmp" style="--p:50%">
-      <img id="img-depois" alt="Pessoa em movimento, em atividade" src="" width="1200" height="900">
-      <img class="topo-img" id="img-antes" alt="Pessoa parada, sentada" src="" width="1200" height="900">
-      <span class="etq e1">Parado</span><span class="etq e2">Em movimento</span>
-      <div class="linha"></div>
-      <label class="sr" for="cmp-r">Comparar as duas imagens</label>
-      <input id="cmp-r" type="range" min="0" max="100" value="50">
+    <div class="rev">
+      <div class="cmp" id="cmp" style="--p:50%">
+        <img id="img-depois" alt="Homem sorrindo ao ar livre, com postura leve" src="" width="512" height="768">
+        <img class="topo-img" id="img-antes" alt="Homem com a mão nas costas, com expressão de desconforto" src="" width="512" height="768">
+        <span class="etq e1">Como você está</span><span class="etq e2">Como quer ficar</span>
+        <div class="linha"></div>
+        <label class="sr" for="cmp-r">Comparar as duas imagens</label>
+        <input id="cmp-r" type="range" min="0" max="100" value="50">
+      </div>
+      <p class="leg">Imagens ilustrativas, que representam um objetivo e não um resultado. Não retratam clientes nem garantem resultado. O Desafio 31 Dias é uma rotina de atividade física e não trata nem promete aliviar dores.</p>
     </div>
-    <p class="leg">Imagens ilustrativas. Não representam resultado garantido; cada pessoa é diferente.</p>
   </div>
 </section>
 
@@ -288,6 +328,19 @@ footer p{max-width:84ch}footer strong{color:var(--ink)}
   </div>
 </section>
 
+<!-- COMPARATIVO -->
+<section style="padding-top:30px">
+  <div class="wrap">
+    <div class="cab c rev"><span class="rot">Por que um desafio guiado</span><h2>Menos dúvida, mais constância</h2></div>
+    <div class="vs rev">
+      <div class="col sem"><h3>Sozinho(a)</h3>
+        <p><i>✕</i>Não sabe por onde começar</p><p><i>✕</i>Treinos longos que não cabem na rotina</p><p><i>✕</i>Dúvida de como fazer cada movimento</p><p><i>✕</i>Falta de constância e de acompanhamento</p></div>
+      <div class="col com"><h3>Com o Desafio 31 Dias</h3>
+        <p><i>✓</i>Treino do dia já montado</p><p><i>✓</i>5 a 8 minutos, no seu horário</p><p><i>✓</i>Demonstração animada de cada exercício</p><p><i>✓</i>Calendário, sequência e conquistas</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- FASES -->
 <section>
   <div class="wrap">
@@ -318,6 +371,15 @@ footer p{max-width:84ch}footer strong{color:var(--ink)}
       <li class="d"><span class="t">Fim</span><span>Treino concluído<small>Seu progresso é atualizado</small></span></li>
     </ol>
   </div>
+</section>
+
+<!-- SEGURANÇA -->
+<section style="padding:20px 0 40px">
+  <div class="wrap"><div class="seguranca rev">
+    <div class="sg-ic">🛡️</div>
+    <div><h3>Segurança em primeiro lugar</h3>
+    <p>Respeite o seu corpo: movimento confortável já é suficiente. Pare se sentir dor, tontura ou desconforto. Se você tem dor intensa, uma condição de saúde, lesão ou cirurgia recente, converse com seu médico ou fisioterapeuta antes de começar. O Desafio 31 Dias não substitui a orientação de um profissional de saúde.</p></div>
+  </div></div>
 </section>
 
 <!-- OFERTA -->
@@ -367,12 +429,11 @@ footer p{max-width:84ch}footer strong{color:var(--ink)}
 <script>
 /* ===== CONFIGURAÇÃO ===== */
 const LINK_COMPRA = "https://pay.kiwify.com.br/AeLsazF";
-/* Slider "Parado → Em movimento": coloque duas fotos SUAS (ou de banco de imagens com licença comercial)
-   em vendas/img/ com estes nomes. Se não existirem, a seção fica escondida.
-   Use imagens de contraste de rotina (parado x ativo). Não use "antes e depois" de resultado de saúde
-   que não seja real e autorizado. */
-const FOTO_PARADO = "img/foto-parado.jpg";
-const FOTO_MOVIMENTO = "img/foto-movimento.jpg";
+/* Slider "Como você está → Como quer ficar": imagens ilustrativas/aspiracionais (não são resultado de cliente).
+   Se os arquivos não existirem, a seção fica escondida. Para mostrar RESULTADO REAL de clientes, use somente
+   fotos reais, com autorização por escrito, e inclua aviso de que os resultados variam. */
+const FOTO_PARADO = "img/foto-hoje.jpg";
+const FOTO_MOVIMENTO = "img/foto-meta.jpg";
 /* ======================== */
 
 document.querySelectorAll("[data-compra]").forEach(a => { a.href = LINK_COMPRA; a.target = "_blank"; a.rel = "noopener"; });
