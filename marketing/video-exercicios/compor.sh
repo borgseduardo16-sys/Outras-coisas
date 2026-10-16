@@ -10,7 +10,7 @@ ffmpeg -v error -y -framerate 30 -i "$Q/f%04d.jpg" -i "$VOZ" -i "$MUS" -filter_c
  eq=contrast=1.05:saturation=1.06:gamma=0.98,vignette=angle=PI/5.5,noise=alls=4:allf=t,unsharp=5:5:0.4,
  ass=$ASS:fontsdir=$FONTS,format=yuv420p[v];
 [1:a]aresample=44100,highpass=f=70,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,volume=1.0,apad,atrim=0:$DUR,asplit=2[voz][sc];
-[2:a]aresample=44100,volume=0.30,atrim=0:$DUR[mus];
+[2:a]aresample=44100,volume=${MUSVOL:-0.30},atrim=0:$DUR[mus];
 [mus][sc]sidechaincompress=threshold=0.02:ratio=5:attack=30:release=450:makeup=1[musd];
 [voz][musd]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.3:LRA=9[a]" \
   -map "[v]" -map "[a]" -c:v libx264 -preset slow -crf 20 -maxrate 12M -bufsize 24M -r 30 \

@@ -62,19 +62,22 @@ export function criarBoneco() {
   spine.add(mesh(tapered(0.30, 0.142, 0.15, 0.03, 0.3, 0.25), shirt, { y: 0.27, sx: 1.08, sz: 0.76 }));
   chest.add(mesh(tapered(0.38, 0.19, 0.142, 0.05, 0.42, 0.3), shirt, { y: 0.30, sx: 1.12, sz: 0.74 }));
   chest.add(mesh(new CylinderGeometry(0.07, 0.08, 0.06, 20), shirt, { y: 0.305 }));                  // gola
-  neck.add(mesh(new CylinderGeometry(0.05, 0.056, 0.14, 20), skin, { y: 0.02 }));
+  neck.add(mesh(new CylinderGeometry(0.047, 0.056, 0.18, 20), skin, { y: 0.06 }));          // entra na cabeça
 
   /* Cabeça: formato oval, cabelo curto, rosto simples */
-  head.add(mesh(new SphereGeometry(0.1, 36, 28), skin, { y: 0.14, sx: 0.93, sy: 1.18, sz: 1.04 }));
-  head.add(mesh(new SphereGeometry(0.06, 24, 16), skin, { y: 0.075, z: 0.035, sx: 1.25, sy: 0.85, sz: 1.1 }));   // queixo/mandíbula
-  head.add(mesh(new SphereGeometry(0.104, 36, 20, 0, Math.PI * 2, 0, 1.45), hair, { y: 0.165, z: -0.01, sx: 0.96, sy: 1.08, sz: 1.08, rx: -0.5 }));
-  head.add(mesh(new SphereGeometry(0.05, 20, 12), hair, { y: 0.245, z: 0.04, sx: 1.6, sy: 0.55, sz: 1.2 }));      // topete discreto
+  // cabeça em perfil de "ovo": crânio mais largo afinando suavemente até o queixo (sem bola no queixo)
+  const perfil = [[0.032, 0.0001], [0.035, 0.022], [0.042, 0.04], [0.055, 0.057], [0.075, 0.074], [0.1, 0.087], [0.13, 0.095],
+    [0.16, 0.099], [0.19, 0.097], [0.215, 0.088], [0.237, 0.068], [0.252, 0.04], [0.259, 0.0001]].map(([y, r]) => new Vector2(r, y));
+  head.add(mesh(new LatheGeometry(perfil, 40), skin, { sx: 0.93, sz: 1.05, z: 0.004 }));
+  // cabelo curto colado ao crânio: calota que acompanha o topo da cabeça, mais baixa atrás
+  head.add(mesh(new SphereGeometry(0.106, 40, 24, 0, Math.PI * 2, 0, 1.62), hair, { y: 0.158, z: -0.004, sx: 0.97, sy: 1.0, sz: 1.08, rx: -0.65 }));
+  head.add(mesh(new SphereGeometry(0.05, 24, 12), hair, { y: 0.228, z: 0.04, sx: 1.5, sy: 0.38, sz: 1.1 }));    // topete discreto
   [-1, 1].forEach((s) => {
     head.add(mesh(new SphereGeometry(0.011, 12, 10), dark, { x: s * 0.034, y: 0.158, z: 0.093, sz: 0.55 }));       // olhos
     head.add(mesh(new BoxGeometry(0.03, 0.006, 0.01), hair, { x: s * 0.035, y: 0.181, z: 0.094, rz: s * -0.12 })); // sobrancelhas
-    head.add(mesh(new SphereGeometry(0.02, 12, 10), skin, { x: s * 0.094, y: 0.145, sx: 0.45, sy: 1.25 }));        // orelhas
+    head.add(mesh(new SphereGeometry(0.016, 12, 10), skin, { x: s * 0.092, y: 0.148, sx: 0.45, sy: 1.35 }));       // orelhas
   });
-  head.add(mesh(new SphereGeometry(0.015, 12, 10), skin, { y: 0.135, z: 0.103, sy: 1.3, sz: 1.1 }));               // nariz
+  head.add(mesh(new SphereGeometry(0.011, 12, 10), skin, { y: 0.137, z: 0.1, sx: 0.9, sy: 1.5, sz: 0.95 }));      // nariz
   head.add(mesh(new BoxGeometry(0.032, 0.005, 0.008), mat(0x7a4a3a, 0.5), { y: 0.103, z: 0.094 }));               // boca neutra
 
   /* Braços com manga curta e mãos com polegar */

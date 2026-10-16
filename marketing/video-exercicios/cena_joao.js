@@ -16,7 +16,7 @@ import {
   chaves, orbita, sm, clamp, lerp, PISO_TORNOZELO, respiro,
 } from './cena.js';
 
-export const T_FIM = 15.8;
+export const T_FIM = 16.4;
 const PI = Math.PI;
 const OBJ = [0.2, 0.012, 0.36];          // celular no chão (x, y, z)
 const _w = new Vector3();
@@ -50,14 +50,14 @@ function poseAbaixar(B, k, { bom = 0, alcance = 1, costas = 0, breath = 0 } = {}
 
 /* ---------- Linha do tempo ---------- */
 export const CENAS = [
-  { ini: 0.0, fim: 1.3, nome: 'apresenta' },
-  { ini: 1.3, fim: 5.5, nome: 'trava' },
-  { ini: 5.5, fim: 6.65, nome: 'm_gato' },
-  { ini: 6.65, fim: 7.8, nome: 'm_joelhos' },
-  { ini: 7.8, fim: 8.95, nome: 'm_ponte' },
-  { ini: 8.95, fim: 10.1, nome: 'm_gato2' },
-  { ini: 10.1, fim: 14.1, nome: 'dia10' },
-  { ini: 14.1, fim: T_FIM + 1, nome: 'final' },
+  { ini: 0.0, fim: 1.5, nome: 'apresenta' },
+  { ini: 1.5, fim: 5.7, nome: 'trava' },
+  { ini: 5.7, fim: 6.85, nome: 'm_gato' },
+  { ini: 6.85, fim: 8.0, nome: 'm_joelhos' },
+  { ini: 8.0, fim: 9.15, nome: 'm_ponte' },
+  { ini: 9.15, fim: 10.15, nome: 'm_gato2' },
+  { ini: 10.15, fim: 14.5, nome: 'dia10' },
+  { ini: 14.5, fim: T_FIM + 1, nome: 'final' },
 ];
 export const cenaEm = (t) => CENAS.find((c) => t >= c.ini && t < c.fim) || CENAS[CENAS.length - 1];
 
@@ -69,10 +69,10 @@ function animar(B, nome, t, t0) {
   switch (nome) {
     case 'apresenta': poseEmPe(B, { breath: respiro(t, 3.2) }); break;
     case 'trava': {
-      const k = chaves(t, [[1.3, 0], [1.7, 0], [2.85, 0.62], [3.05, 0.55], [3.6, 0.42], [5.5, 0.38]]);
-      const costas = chaves(t, [[2.9, 0], [3.4, 1]]);
+      const k = chaves(t, [[1.5, 0], [1.9, 0], [3.05, 0.62], [3.25, 0.55], [3.8, 0.42], [5.7, 0.38]]);
+      const costas = chaves(t, [[3.1, 0], [3.6, 1]]);
       poseAbaixar(B, k, { bom: 0, alcance: 1 - costas, costas, breath: respiro(t, 1.6) });
-      xr = chaves(t, [[2.8, 0], [3.05, 1], [5.5, 0.9]]) * (0.8 + 0.2 * Math.sin(t * 10));
+      xr = chaves(t, [[3.0, 0], [3.25, 1], [5.7, 0.9]]) * (0.8 + 0.2 * Math.sin(t * 10));
       break;
     }
     case 'm_gato': poseGato(B, Math.sin(u * 2 * PI / 1.1 + PI / 2) * 0.95); break;
@@ -80,15 +80,15 @@ function animar(B, nome, t, t0) {
     case 'm_ponte': posePonte(B, sm(clamp(u / 0.6, 0, 1))); break;
     case 'm_gato2': poseGato(B, Math.sin(u * 2 * PI / 1.1 - PI / 2) * 0.95); break;
     case 'dia10': {
-      const k = chaves(t, [[10.1, 0], [10.5, 0], [11.45, 1], [11.75, 1], [12.6, 0], [14.1, 0]]);
-      segurando = t >= 11.6;
-      if (t < 12.6) poseAbaixar(B, k, { bom: 1, alcance: t < 11.75 ? 1 : 1, breath: respiro(t, 3) });
-      else poseEmPe(B, { bracos: chaves(t, [[12.6, 0], [13.4, 1], [14.1, 1]]), breath: respiro(t, 3), olhar: -0.1 });
-      xr = chaves(t, [[12.0, 0], [12.8, 0.95], [14.1, 0.95]]) * (0.88 + 0.12 * Math.sin(t * 3));
+      const k = chaves(t, [[10.15, 0], [10.55, 0], [11.5, 1], [11.8, 1], [12.65, 0], [14.5, 0]]);
+      segurando = t >= 11.65;
+      if (t < 12.65) poseAbaixar(B, k, { bom: 1, alcance: 1, breath: respiro(t, 3) });
+      else poseEmPe(B, { bracos: chaves(t, [[12.65, 0], [13.45, 1], [14.5, 1]]), breath: respiro(t, 3), olhar: -0.1 });
+      xr = chaves(t, [[12.25, 0], [12.95, 0.95], [14.5, 0.95]]) * (0.88 + 0.12 * Math.sin(t * 3));
       cor = 0x2ee6c8; foco = 0.35; break;
     }
     case 'final': {
-      const b = chaves(t, [[14.1, 1], [14.9, 0]]);
+      const b = chaves(t, [[14.5, 1], [15.3, 0]]);
       poseEmPe(B, { bracos: b, breath: respiro(t, 3), olhar: -0.05 });
       segurando = true;
       xr = 0.9 * (0.88 + 0.12 * Math.sin(t * 3)); cor = 0x2ee6c8; foco = 0.35; break;
