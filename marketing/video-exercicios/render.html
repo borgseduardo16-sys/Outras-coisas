@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000"><canvas id="c"></canvas>
+<script src="cena.bundle.js"></script>
+<script>
+const q = new URLSearchParams(location.search), W = +(q.get('w') || 810), H = +(q.get('h') || 1440);
+const c = document.getElementById('c'); c.width = W; c.height = H;
+cenaEx.iniciar(c, W, H).then((a) => { window.app = a; window.pronto = true; }).catch((e) => { window.erro = String(e); console.log('ERRO', e); });
+</script>
