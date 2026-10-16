@@ -106,6 +106,8 @@ h1:focus, .conteudo:focus { outline: none; }
 .card-atraso { background: var(--aviso-suave); border-color: var(--aviso-linha); color: var(--aviso); display: flex; flex-direction: column; gap: 6px; }
 .card-atraso .btn { margin-top: 8px; }
 .card-feito { background: var(--ok-suave); border-color: #A9D8BC; color: #14502F; display: flex; flex-direction: column; gap: 14px; }
+.card-rodada { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; text-align: left; background: var(--primary-suave); border: 2px solid var(--primary); box-shadow: var(--sombra); }
+.card-rodada .btn { align-self: stretch; margin-top: 6px; }
 .msg-grande { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; margin-bottom: .3rem !important; }
 .aviso-saude { text-align: left; display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,.7); border: 1px solid var(--linha); border-radius: 18px; padding: 14px 16px; color: var(--muted); font-size: .92rem; }
 .aviso-saude p { margin: 0; }

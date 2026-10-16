@@ -10,10 +10,14 @@ D31.progress = (() => {
   const foiConcluido = (n) => !!S().concluidos[n];
   const todosConcluidos = () => concluidosQtd() >= T;
 
-  /** Maior dia "liberado" pelo calendário (1 antes de começar). */
+  /** Nova rodada agendada para começar num dia futuro (ex.: amanhã). */
+  const aguardandoInicio = () => !!S().inicio && D31.dates.diff(hoje(), S().inicio) > 0;
+
+  /** Maior dia "liberado" pelo calendário (1 antes de começar; 0 se a rodada ainda não começou). */
   function diaLiberado() {
     const inicio = S().inicio;
     if (!inicio) return 1;
+    if (aguardandoInicio()) return 0;
     return Math.max(1, Math.min(T, D31.dates.diff(inicio, hoje()) + 1));
   }
 
@@ -74,14 +78,16 @@ D31.progress = (() => {
     D31.storage.set({ inicio: D31.dates.add(hoje(), -(p - 1)) });
   }
 
-  /** Recomeça o desafio, preservando nome, preferências e histórico. */
-  function recomecar() {
+  /** Recomeça o desafio, preservando nome, preferências e histórico.
+   *  Com { amanha: true }, a nova rodada só libera o Dia 1 a partir de amanhã. */
+  function recomecar({ amanha = false } = {}) {
     const s = S();
     const novo = D31.storage.vazio();
     novo.nome = s.nome; novo.som = s.som; novo.aviso = s.aviso;
     novo.historico = s.historico;
     novo.ultimoTreino = s.ultimoTreino;
     novo.ciclos = s.ciclos + (todosConcluidos() ? 1 : 0);
+    if (amanha) novo.inicio = D31.dates.add(hoje(), 1);
     D31.storage.substituir(novo);
   }
 
@@ -93,7 +99,8 @@ D31.progress = (() => {
   return {
     concluidosQtd, foiConcluido, todosConcluidos, diaLiberado, proximoDia, estado,
     podeTreinar, treinouHoje, temAtraso, sequencia, iniciar, concluirDia,
-    continuarDeHoje, recomecar, ultimaConclusao,
+    continuarDeHoje, recomecar, ultimaConclusao, aguardandoInicio,
+    rodada: () => (S().ciclos || 0) + 1,
     porcentagem: () => Math.round((concluidosQtd() / T) * 100),
   };
 })();

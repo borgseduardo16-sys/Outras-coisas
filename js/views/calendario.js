@@ -12,6 +12,10 @@ D31.views.calendario = () => {
     h('p', { class: 'lead' }, `${P.concluidosQtd()} de ${T} dias concluídos`),
     D31.BarraProgresso(P.porcentagem()));
 
+  if (P.aguardandoInicio()) {
+    raiz.append(h('p', { class: 'nota nota-centro' }, `Sua rodada ${P.rodada()} começa amanhã. O Dia 1 será liberado automaticamente.`));
+  }
+
   if (P.temAtraso() && P.proximoDia() != null) {
     raiz.append(h('div', { class: 'card card-atraso' },
       h('p', { class: 'msg-grande' }, 'Você não perdeu seu progresso.'),

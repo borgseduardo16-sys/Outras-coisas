@@ -38,6 +38,27 @@ D31.views.concluido = (n) => {
     D31.AvisoSaude());
 };
 
+/** Convite para uma nova rodada, que começa amanhã (usado na tela final e na home). */
+D31.CardNovaRodada = () => {
+  const { h } = D31;
+  const prox = D31.progress.rodada() + 1;
+  return h('section', { class: 'card card-rodada no-print', 'aria-label': 'Nova rodada' },
+    h('span', { class: 'selo' }, `Rodada ${prox}`),
+    h('p', { class: 'msg-grande' }, 'Quer aprimorar seus resultados?'),
+    h('p', {}, 'O corpo responde à constância. Faça mais uma rodada dos 31 dias: o Dia 1 é liberado amanhã, e seu histórico continua guardado.'),
+    D31.Botao({
+      texto: 'RECOMEÇAR AMANHÃ', icone: 'repeat', grande: true,
+      onclick: async () => {
+        const ok = await D31.confirmar({
+          titulo: `Começar a rodada ${prox}?`,
+          texto: 'Seu calendário volta para o Dia 1, que fica liberado a partir de amanhã. Seu nome e seu histórico continuam guardados.',
+          confirmar: 'Sim, começar amanhã', cancelar: 'Agora não',
+        });
+        if (ok) { D31.progress.recomecar({ amanha: true }); location.hash = '#/'; D31.router.renderizar(); }
+      },
+    }));
+};
+
 D31.views.desafio = () => {
   const { h, progress: P } = D31;
   const T = D31.TOTAL_DIAS;
@@ -57,12 +78,13 @@ D31.views.desafio = () => {
     D31.Confete(),
     h('div', { class: 'festa-emoji', 'aria-hidden': 'true' }, '🏆'),
     h('h1', { tabindex: '-1' }, 'DESAFIO CONCLUÍDO'),
-    h('p', { class: 'lead' }, 'Você completou os 31 dias.'),
+    h('p', { class: 'lead' }, P.rodada() > 1 ? `Você completou os 31 dias pela ${P.rodada()}ª vez.` : 'Você completou os 31 dias.'),
     h('div', { class: 'card stats-grade' },
       D31.Stat(`${T}/${T} dias`, 'Concluídos'),
       D31.Stat('100%', 'Concluído')),
     D31.BarraProgresso(100),
     h('p', { class: 'motivacao' }, 'Você criou uma rotina e a manteve. Isso é uma conquista sua.'),
+    D31.CardNovaRodada(),
 
     h('div', { class: 'campo no-print' },
       h('label', { for: 'nome' }, 'Seu nome para o certificado'), entrada),
@@ -78,17 +100,6 @@ D31.views.desafio = () => {
         h('p', { class: 'cert-aviso' }, 'Certificado de participação em uma rotina de atividade física e educação geral.'))),
 
     h('div', { class: 'acoes-col no-print' },
-      D31.Botao({ texto: 'IMPRIMIR OU SALVAR EM PDF', icone: 'print', tipo: 'secundario', grande: true, onclick: () => window.print() }),
-      D31.Botao({
-        texto: 'RECOMEÇAR DESAFIO', icone: 'repeat', grande: true,
-        onclick: async () => {
-          const ok = await D31.confirmar({
-            titulo: 'Recomeçar o desafio?',
-            texto: 'Você começará novamente do Dia 1. Seu histórico e seu nome continuam guardados.',
-            confirmar: 'Sim, recomeçar', cancelar: 'Voltar',
-          });
-          if (ok) { D31.progress.recomecar(); location.hash = '#/'; D31.router.renderizar(); }
-        },
-      })),
+      D31.Botao({ texto: 'IMPRIMIR OU SALVAR EM PDF', icone: 'print', tipo: 'secundario', grande: true, onclick: () => window.print() })),
     D31.AvisoSaude());
 };

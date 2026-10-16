@@ -26,7 +26,8 @@ D31.views.home = () => {
       h('ul', { class: 'hero-chips' },
         h('li', {}, D31.icon('clock', 18), '5 a 8 min por dia'),
         h('li', {}, D31.icon('calendar', 18), '31 dias'),
-        h('li', {}, D31.icon('zap', 18), 'Sem equipamentos'))),
+        h('li', {}, D31.icon('zap', 18), 'Sem equipamentos'),
+        P.rodada() > 1 && h('li', {}, D31.icon('repeat', 18), `Rodada ${P.rodada()}`))),
     h('div', { class: 'hero-palco' }, D31.Figura3D({ exercicio: demoEx, giro: 'oscilar', angulo: 0.4 }))));
 
   raiz.append(h('p', { class: 'hero-chamada' }, 'Alguns minutos por dia. Uma rotina para ajudar você a manter o corpo em movimento.'));
@@ -55,6 +56,7 @@ D31.views.home = () => {
     raiz.append(h('section', { class: 'card card-feito' },
       h('p', { class: 'msg-grande' }, '🏆 Você completou os 31 dias!'),
       D31.Botao({ texto: 'VER MEU CERTIFICADO', icone: 'arrow', grande: true, href: '#/desafio-concluido' })));
+    raiz.append(D31.CardNovaRodada());
   } else {
     if (P.temAtraso() && liberado) {
       raiz.append(h('div', { class: 'card card-atraso' },
@@ -69,10 +71,13 @@ D31.views.home = () => {
       h('div', { class: 'hoje-topo' },
         h('span', { class: 'selo' }, `Fase ${dia.fase.id} · ${dia.fase.nome}`),
         h('span', { class: 'hoje-meta' }, D31.icon('clock', 18), `${Math.ceil(dia.totalSeg / 60)} min · ${dia.itens.length} exercícios`)),
-      h('h2', {}, liberado ? `Treino de hoje — Dia ${proximo}` : '🎉 Treino de hoje concluído!'),
+      h('h2', {}, liberado ? `Treino de hoje — Dia ${proximo}`
+        : P.aguardandoInicio() ? `🚀 Sua rodada ${P.rodada()} começa amanhã!` : '🎉 Treino de hoje concluído!'),
       liberado
         ? h('ul', { class: 'hoje-lista' }, chips)
-        : h('p', {}, `Descanse bem. Volte amanhã para o Dia ${proximo}.`));
+        : h('p', {}, P.aguardandoInicio()
+          ? 'Descanse hoje. Amanhã o Dia 1 é liberado e você recomeça com tudo.'
+          : `Descanse bem. Volte amanhã para o Dia ${proximo}.`));
     if (liberado) {
       cartao.append(
         D31.Botao({
