@@ -3,10 +3,10 @@
 # Uso: compor.sh <pasta_quadros> <voz.mp3> <musica.wav> <textos.ass> <fontsdir> <saida.mp4>
 set -euo pipefail
 Q=$1; VOZ=$2; MUS=$3; ASS=$4; FONTS=$5; OUT=$6
-DUR=50.2
+DUR=${DUR:-50.2}
 
 ffmpeg -v error -y -framerate 30 -i "$Q/f%04d.jpg" -i "$VOZ" -i "$MUS" -filter_complex "
-[0:v]scale=1080:1920:flags=lanczos,tpad=stop_mode=add:stop_duration=7:color=black,trim=0:$DUR,
+[0:v]scale=1080:1920:flags=lanczos,tpad=stop_mode=add:stop_duration=8:color=black,trim=0:$DUR,
  eq=contrast=1.05:saturation=1.06:gamma=0.98,vignette=angle=PI/5.5,noise=alls=4:allf=t,unsharp=5:5:0.4,
  ass=$ASS:fontsdir=$FONTS,format=yuv420p[v];
 [1:a]aresample=44100,highpass=f=70,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,volume=1.0,apad,atrim=0:$DUR,asplit=2[voz][sc];

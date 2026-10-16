@@ -16,13 +16,13 @@ import { criarBoneco, ik2, dirMembro, HIP_Y, THIGH, SHIN, UARM, FARM, TORSO } fr
 
 export const T_FIM = 44.0;
 const PI = Math.PI;
-const sm = (x) => x * x * (3 - 2 * x);
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const lerp = (a, b, k) => a + (b - a) * k;
-const PISO_TORNOZELO = 0.078;   // altura da articulação do tornozelo com o tênis apoiado no chão
+export const sm = (x) => x * x * (3 - 2 * x);
+export const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+export const lerp = (a, b, k) => a + (b - a) * k;
+export const PISO_TORNOZELO = 0.078;   // altura da articulação do tornozelo com o tênis apoiado no chão
 
 /** Interpola chaves [[t, v], ...] com suavização. */
-function chaves(t, ks) {
+export function chaves(t, ks) {
   if (t <= ks[0][0]) return ks[0][1];
   for (let i = 1; i < ks.length; i++) {
     if (t <= ks[i][0]) { const [t0, v0] = ks[i - 1], [t1, v1] = ks[i]; return lerp(v0, v1, sm((t - t0) / (t1 - t0))); }
@@ -46,7 +46,7 @@ function texturaPiso() {
   return t;
 }
 
-function montarCenario(scene) {
+export function montarCenario(scene) {
   const m = (color, rough = 0.85, extra = {}) => new MeshStandardMaterial({ color, roughness: rough, ...extra });
   const piso = new Mesh(new PlaneGeometry(14, 14), m(0xffffff, 0.62, { map: texturaPiso() }));
   piso.rotation.x = -PI / 2; piso.receiveShadow = true; scene.add(piso);
@@ -117,7 +117,7 @@ function montarCenario(scene) {
 }
 
 /* ---------- Aplicação de pose (ângulos absolutos no plano sagital) ---------- */
-function aplicarTronco(B, P) {
+export function aplicarTronco(B, P) {
   B.root.position.set(0, P.root[0], P.root[1]);
   B.root.rotation.set(P.pel, 0, 0);
   B.spine.rotation.set(P.spi - P.pel, 0, P.spiZ || 0);
@@ -128,9 +128,9 @@ function aplicarTronco(B, P) {
   B.figure.updateMatrixWorld(true);
 }
 const _v = new Vector3();
-const pos = (obj) => { obj.getWorldPosition(_v); return [_v.y, _v.z]; };
+export const pos = (obj) => { obj.getWorldPosition(_v); return [_v.y, _v.z]; };
 
-function aplicarMembros(B, P) {
+export function aplicarMembros(B, P) {
   [0, 1].forEach((i) => {
     const s = i === 0 ? 1 : -1, a = P.arms[i], l = P.legs[i];
     B.arms[i].shoulder.rotation.set(a.u - P.che, 0, s * (a.abd ?? 0.12));
@@ -143,13 +143,13 @@ function aplicarMembros(B, P) {
 }
 
 /** Pernas e braços por IK a partir dos alvos (após posicionar o tronco). */
-function pernasIK(B, alvos, lado, pes) {
+export function pernasIK(B, alvos, lado, pes) {
   return [0, 1].map((i) => {
     const [t, s] = ik2(pos(B.legs[i].hip), alvos[i], THIGH, SHIN, lado);
     return { t, s, f: typeof pes === 'function' ? pes(s) : pes };
   });
 }
-function bracosIK(B, alvos, lado, mao, abd) {
+export function bracosIK(B, alvos, lado, mao, abd) {
   return [0, 1].map((i) => {
     const [u, f] = ik2(pos(B.arms[i].shoulder), alvos[i], UARM, FARM, lado);
     return { u, f, h: typeof mao === 'function' ? mao(f) : mao, abd };
@@ -158,7 +158,7 @@ function bracosIK(B, alvos, lado, mao, abd) {
 
 /* ---------- Poses ---------- */
 // Em pé. dor: 0..1 (curvado com a mão na lombar); bracos: 0..1 (alongamento acima da cabeça); breath 0..1
-function poseEmPe(B, { dor = 0, bracos = 0, breath = 0, olhar = 0 } = {}) {
+export function poseEmPe(B, { dor = 0, bracos = 0, breath = 0, olhar = 0 } = {}) {
   const P = {
     root: [HIP_Y + 0.075 - 0.02 * dor, -0.03 * dor], pel: 0.12 * dor - 0.03 * bracos,
     spi: 0.34 * dor - 0.05 * bracos, che: 0.5 * dor - 0.1 * bracos, nec: 0.55 * dor - 0.12 * bracos + olhar,
@@ -178,7 +178,7 @@ function poseEmPe(B, { dor = 0, bracos = 0, breath = 0, olhar = 0 } = {}) {
 // Gato-camelo, quatro apoios. s: -1 camelo (costas afundam, olha para frente) .. +1 gato (costas arredondadas)
 const GATO = { base: [1.42, 1.40, 1.30, 1.55], gato: [1.16, 1.02, 1.86, 2.45], camelo: [1.66, 1.74, 1.04, 0.78] };
 let alvosMaos = null;
-function poseGato(B, s, breath = 0) {
+export function poseGato(B, s, breath = 0) {
   const k = Math.abs(s), alvo = s > 0 ? GATO.gato : GATO.camelo;
   const [pel, spi, che, nec] = GATO.base.map((b, i) => lerp(b, alvo[i], k));
   const P = { root: [0.53, -0.2], pel, spi, che, nec, breath };
@@ -196,7 +196,7 @@ function poseGato(B, s, breath = 0) {
 // Deitado de barriga para cima, cabeça para -Z.
 const SUP_Y = 0.125;
 // Joelhos ao peito. s: 0 (joelhos dobrados, pés no chão) .. 1 (abraçando os joelhos)
-function poseJoelhos(B, s, breath = 0, balanco = 0) {
+export function poseJoelhos(B, s, breath = 0, balanco = 0) {
   const P = { root: [SUP_Y, 0.15], pel: -PI / 2 + 0.12 * s, spi: -PI / 2 + 0.05 * s, che: -PI / 2 - 0.02, nec: -PI / 2 - 0.1 - 0.15 * s, breath };
   aplicarTronco(B, P);
   const [hy, hz] = pos(B.legs[0].hip);
@@ -214,7 +214,7 @@ function poseJoelhos(B, s, breath = 0, balanco = 0) {
 }
 
 // Ponte. h: 0 (deitado, pés no chão) .. 1 (quadril elevado)
-function posePonte(B, h, breath = 0) {
+export function posePonte(B, h, breath = 0) {
   const ombro = [SUP_Y, 0.15 - TORSO];
   const hR = SUP_Y + 0.32 * h;
   const th = -Math.acos(clamp((ombro[0] - hR) / TORSO, -1, 1));
@@ -241,7 +241,7 @@ export const CENAS = [
   { ini: 34.15, fim: T_FIM, nome: 'segredo' },
 ];
 
-const respiro = (t, per = 4) => 0.5 - 0.5 * Math.cos((2 * PI * t) / per);
+export const respiro = (t, per = 4) => 0.5 - 0.5 * Math.cos((2 * PI * t) / per);
 
 function animar(B, nome, t, t0) {
   const u = t - t0;
@@ -285,7 +285,7 @@ function animar(B, nome, t, t0) {
 }
 
 /* ---------- Câmera por cena (posição, alvo, fov) com pequeno balanço "de mão" ---------- */
-function orbita(az, el, dist, alvo) {
+export function orbita(az, el, dist, alvo) {
   return [alvo[0] + Math.sin(az) * Math.cos(el) * dist, alvo[1] + Math.sin(el) * dist, alvo[2] + Math.cos(az) * Math.cos(el) * dist];
 }
 function cameraDe(nome, t, t0, t1) {
