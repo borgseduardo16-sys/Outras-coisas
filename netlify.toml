@@ -1,0 +1,14 @@
+# Publicação do app no Netlify (conectado ao GitHub). Só o app vai para o ar; as funções em netlify/functions
+# controlam o acesso por comprador (e-mail da compra, até 2 aparelhos) e recebem o webhook da Kiwify.
+[build]
+  command = "node scripts/publicar.mjs"
+  publish = "publicar"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -48,4 +48,4 @@ D31.router = (() => {
   return { iniciar, renderizar, aoSair };
 })();
 
-document.addEventListener('DOMContentLoaded', D31.router.iniciar);
+document.addEventListener('DOMContentLoaded', () => D31.acesso.garantir(D31.router.iniciar));

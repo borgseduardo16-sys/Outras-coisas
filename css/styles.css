@@ -453,3 +453,25 @@ body.imersivo .conteudo { max-width: 640px; padding: 0 16px 20px; }
   .fig, .fig *, .barra-fill, .btn { animation: none !important; transition: none !important; }
 }
 
+
+/* ---------- Tela de acesso (e-mail da compra) e bloqueio ---------- */
+body.tela-acesso { background: radial-gradient(120% 80% at 50% 0%, #10302f 0%, #071a1a 55%, #040c0c 100%); min-height: 100vh; }
+body.tela-bloqueio { background: #000; }
+.acesso-caixa { max-width: 420px; margin: 0 auto; min-height: 100vh; padding: 48px 24px; display: flex; flex-direction: column; justify-content: center; gap: 14px; color: #eef5f3; font-family: var(--sans); }
+.acesso-caixa h1 { font-family: var(--serif); font-size: 2.1rem; line-height: 1.1; margin: 4px 0 0; color: #fff; }
+.acesso-caixa p { margin: 0; font-size: 1.12rem; line-height: 1.55; color: #c9dad6; }
+.acesso-marca { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #fff; font-size: 1.05rem; }
+.acesso-31 { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #17a398; color: #fff; font-weight: 800; }
+.acesso-form { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.acesso-form label { font-weight: 700; font-size: 1.05rem; color: #fff; }
+.acesso-form input { font: inherit; font-size: 1.15rem; padding: 16px 18px; border-radius: 16px; border: 2px solid #2b5a57; background: #0b2423; color: #fff; }
+.acesso-form input:focus { outline: 3px solid #5fd3c6; outline-offset: 2px; border-color: #5fd3c6; }
+.acesso-botao { font: inherit; font-weight: 800; font-size: 1.15rem; letter-spacing: .04em; padding: 17px; border: 0; border-radius: 16px; background: linear-gradient(135deg, #ff9a62, #ff7a45); color: #2a1206; cursor: pointer; min-height: 58px; }
+.acesso-botao:disabled { opacity: .7; cursor: progress; }
+.acesso-erro { min-height: 1.4em; color: #ffb4a0 !important; font-weight: 600; }
+.acesso-ajuda { font-size: .98rem !important; color: #8fb0aa !important; }
+.tela-bloqueio .acesso-caixa { text-align: center; align-items: center; }
+.tela-bloqueio .acesso-caixa p { color: #b8b8b8; }
+.acesso-cadeado { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #161616; color: #fff; }
+.acesso-cadeado svg { stroke: #fff; }
+.acesso-link { font: inherit; margin-top: 18px; background: none; border: 0; color: #9a9a9a; text-decoration: underline; cursor: pointer; font-size: 1rem; padding: 10px; }
