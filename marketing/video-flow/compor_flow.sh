@@ -14,7 +14,7 @@ VF="
  scale=w='trunc(1080*(1+0.28*pow(max(0,1-t/0.3),2)+0.045*exp(-mod(t,$BEAT*2)/0.09))/2)*2':h=-2:eval=frame:flags=bicubic,
  crop=1080:1920:(iw-1080)/2:(ih-1920)*0.45,setsar=1,
  tpad=stop_mode=clone:stop_duration=2.75,
- gblur=sigma=14:enable='gte(t,6.4)',eq=brightness=-0.22:saturation=0.6:enable='gte(t,6.4)'[b];
+ fade=t=out:st=6.25:d=0.15[b];
 [a][b]concat=n=2:v=1:a=0,trim=0:16.6,
  eq=contrast=1.07:saturation=1.08,vignette=angle=PI/5,noise=alls=5:allf=t,unsharp=5:5:0.5,
  ass=$ASS:fontsdir=$FONTS,format=yuv420p[v]"

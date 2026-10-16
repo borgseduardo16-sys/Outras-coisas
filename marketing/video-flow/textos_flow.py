@@ -43,16 +43,11 @@ for grande, peq in blocos:
     t += dur
 pop(t, T_CARD, "SUA " + TEAL + "COLUNA" + BR + r"\N" + "VAI AGRADECER", 250, "Gancho")
 
-# --- Cartão final ---
-ev.append(("Kicker", T_CARD + 0.10, FIM, r"{\an5\pos(540,700)\fad(250,0)}DESAFIO 31 DIAS"))
-ev.append(("Card", T_CARD + 0.15, FIM,
-           r"{\an5\pos(540,860)\fscx120\fscy120\t(0,180,\fscx100\fscy100)\fad(150,0)}Método " + TEAL + "Coluna Nova"))
-ev.append(("Card2", T_CARD + 0.55, FIM,
-           r"{\an5\pos(540,1010)\fscx120\fscy120\t(0,160,\fscx100\fscy100)\fad(150,0)}link na descrição"))
-# seta animada apontando para baixo
-for k in range(3):
-    a = T_CARD + 0.9 + k * 0.12
-    ev.append(("Seta", a, FIM, r"{\an5\pos(540,%d)\fad(200,0)\bord0\shad0\p1}m 0 0 l 36 30 l 72 0 l 72 14 l 36 44 l 0 14{\p0}" % (1135 + k * 46)))
+# --- Cartão final: tela preta simples, só a mensagem com leve animação ---
+ev.append(("Card", T_CARD + 0.20, FIM,
+           r"{\an5\pos(540,880)\fscx92\fscy92\t(0,500,\fscx100\fscy100)\fad(400,0)}Método " + TEAL + "Coluna Nova"))
+ev.append(("Card2", T_CARD + 0.70, FIM,
+           r"{\an5\pos(540,1030)\fscx92\fscy92\t(0,500,\fscx100\fscy100)\fad(400,0)}link na descrição"))
 
 cab = r"""[Script Info]
 ScriptType: v4.00+
