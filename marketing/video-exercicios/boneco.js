@@ -40,11 +40,11 @@ function texturaBrilho() {
   return new CanvasTexture(c);
 }
 
-export function criarBoneco() {
+export function criarBoneco({ camiseta = 0x7d838b, calca = 0x202328 } = {}) {
   const mat = (color, rough = 0.7, metal = 0) => new MeshStandardMaterial({ color, roughness: rough, metalness: metal });
   const skin = mat(0xc98d68, 0.52);
-  const shirt = mat(0x7d838b, 0.88);        // camiseta cinza mescla
-  const pants = mat(0x202328, 0.85);        // calça de moletom preta
+  const shirt = mat(camiseta, 0.88);        // camiseta (padrão: cinza mescla)
+  const pants = mat(calca, 0.85);           // calça de moletom (padrão: preta)
   const shoe = mat(0xe9e9e6, 0.55), sole = mat(0x55595f, 0.6);
   const hair = mat(0x2b211b, 0.75);         // castanho escuro
   const dark = mat(0x1a1512, 0.4);
@@ -58,8 +58,7 @@ export function criarBoneco() {
 
   /* Tronco: quadril, abdômen e peito (ombros mais largos, cintura mais fina) */
   root.add(mesh(new SphereGeometry(0.15, 32, 22), pants, { sx: 1.1, sy: 0.82, sz: 0.8, y: -0.02 }));
-  root.add(mesh(new CylinderGeometry(0.152, 0.158, 0.06, 32), pants, { y: 0.06, sz: 0.8 }));       // cós
-  spine.add(mesh(tapered(0.30, 0.142, 0.15, 0.03, 0.3, 0.25), shirt, { y: 0.27, sx: 1.08, sz: 0.76 }));
+  spine.add(mesh(tapered(0.31, 0.142, 0.15, 0.03, 0.3, 0.22), shirt, { y: 0.265, sx: 1.08, sz: 0.77 }));
   chest.add(mesh(tapered(0.38, 0.19, 0.142, 0.05, 0.42, 0.3), shirt, { y: 0.30, sx: 1.12, sz: 0.74 }));
   chest.add(mesh(new CylinderGeometry(0.07, 0.08, 0.06, 20), shirt, { y: 0.305 }));                  // gola
   neck.add(mesh(new CylinderGeometry(0.047, 0.056, 0.18, 20), skin, { y: 0.06 }));          // entra na cabeça
@@ -93,7 +92,11 @@ export function criarBoneco() {
     const wrist = J(elbow, 0, -FARM, 0);
     wrist.add(mesh(new SphereGeometry(0.05, 16, 12), skin, { y: -0.06, sx: 0.88, sy: 1.35, sz: 0.48 }));
     wrist.add(mesh(new SphereGeometry(0.016, 10, 8), skin, { x: s * -0.035, y: -0.045, z: 0.022, sy: 2.0, rz: s * 0.5 }));
-    return { clav, shoulder, elbow, wrist };
+    // dedo indicador estendido (só aparece em gestos, ex.: "não" com o dedo)
+    const dedo = mesh(new CylinderGeometry(0.0095, 0.011, 0.07, 10), skin, { y: -0.135, z: 0.0 });
+    dedo.add(mesh(new SphereGeometry(0.0095, 10, 8), skin, { y: -0.035 }));
+    dedo.visible = false; wrist.add(dedo);
+    return { clav, shoulder, elbow, wrist, dedo };
   });
 
   /* Pernas com calça de moletom (punho) e tênis */
