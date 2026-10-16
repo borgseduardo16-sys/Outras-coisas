@@ -55,9 +55,9 @@ FALA = [
 for ini, fim, blocos in FALA:
     pesos = [len(b.replace("*", "")) + 5 for b in blocos]
     tot, t = sum(pesos), ini
-    for b, p in zip(blocos, pesos):
+    for j, (b, p) in enumerate(zip(blocos, pesos)):
         d = (fim - ini) * p / tot
-        z = t + d + 0.12
+        z = t + d + (0.12 if j == len(blocos) - 1 else -0.01)
         add("Leg", t, z, r"{\an5\pos(540,1530)\fscx86\fscy86\t(0,100,\fscx100\fscy100)}" + destaque(b))
         t += d
 
@@ -116,11 +116,12 @@ TITULOS = [
     (9.55, 19.45, "1 · GATO E CAMELO", "10 vezes · bem devagar"),
     (19.6, 26.85, "2 · JOELHOS AO PEITO", "segure 30 segundos"),
     (27.0, 34.1, "3 · PONTE", "10 vezes"),
-    (34.25, T_CARD, "O SEGREDO", "um pouquinho todo dia, com método"),
+    (34.25, T_CARD, "O SEGREDO", ""),
 ]
 for a, z, tit, sub in TITULOS:
     add("Titulo", a, z, r"{\an5\pos(540,300)\fad(150,0)\fscx112\fscy112\t(0,160,\fscx100\fscy100)}" + tit)
-    add("Sub", a + 0.15, z, r"{\an5\pos(540,372)\fad(200,0)}" + sub)
+    if sub:
+        add("Sub", a + 0.15, z, r"{\an5\pos(540,372)\fad(200,0)}" + sub)
 
 # ---------- Cartão final (tela preta simples) ----------
 add("Fundo", T_CARD - 0.25, FIM, r"{\an7\pos(0,0)\1c&H000000&\bord0\shad0\fad(250,0)\p1}m 0 0 l 1080 0 1080 1920 0 1920{\p0}", 5)

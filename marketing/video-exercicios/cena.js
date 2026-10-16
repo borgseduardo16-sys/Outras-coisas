@@ -299,7 +299,7 @@ function cameraDe(nome, t, t0, t1) {
     case 'gato': return { p: orbita(lerp(1.05, 1.4, e), lerp(0.18, 0.26, e), lerp(3.5, 3.1, e), [0, 0.42, 0.12]), a: [0, 0.42, 0.12], fov: 36 };
     case 'joelhos': return { p: orbita(lerp(0.95, 1.2, e), lerp(0.42, 0.5, e), lerp(3.6, 3.2, e), [0, 0.22, -0.05]), a: [0, 0.22, -0.05], fov: 42 };
     case 'ponte': return { p: orbita(lerp(1.3, 1.02, e), lerp(0.26, 0.32, e), lerp(3.7, 3.3, e), [0, 0.25, 0.0]), a: [0, 0.25, 0.0], fov: 42 };
-    case 'segredo': return { p: orbita(lerp(2.25, 2.6, e), lerp(0.04, 0.1, e), lerp(3.9, 3.3, e), [0, 1.15, 0]), a: [0, 1.15, 0], fov: 38 };
+    case 'segredo': return { p: orbita(lerp(2.25, 2.6, e), lerp(0.02, 0.06, e), lerp(3.4, 3.0, e), [0, 1.4, 0]), a: [0, 1.4, 0], fov: 43 };
   }
   return { p: [3, 1.5, 3], a: [0, 1, 0], fov: 35 };
 }
