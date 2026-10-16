@@ -23,8 +23,7 @@ BAR = 60 / BPM * 4
 SEG = [
     (16.15, BAR, 'dor', 1.10, 1.18),
     (0.70, BAR, 'dor', 1.05, 1.13),
-    (4.25, BAR, 'ativo', 0.98, 1.02),
-    (7.35, BAR, 'ativo', 1.06, 1.10),
+    (4.25, BAR * 2, 'ativo', 0.98, 1.06, 0.82),   # braços para cima em leve câmera lenta
     (12.60, BAR * 2, 'ativo', 0.98, 1.06),
     (17.70, BAR, 'final', 1.04, 1.12),
 ]
@@ -96,12 +95,13 @@ def aneis(img, cx, cy, raio, alfa):
 out = sys.stdout.buffer
 t_out = 0.0
 quadros_teste = []
-for si, (ini, dur, tipo, z0, z1) in enumerate(SEG):
+for si, (ini, dur, tipo, z0, z1, *vel) in enumerate(SEG):
+    vel = vel[0] if vel else 1.0
     n = int(round(dur * FPS))
     mask_ema = None
     po = mpose.Pose(static_image_mode=False, model_complexity=2, smooth_landmarks=True)
     for k in range(n):
-        ts = ini + k / FPS
+        ts = ini + k / FPS * vel
         cap.set(cv2.CAP_PROP_POS_FRAMES, int(round(ts * SFPS)))
         ok, fr = cap.read()
         if not ok: break
@@ -121,7 +121,7 @@ for si, (ini, dur, tipo, z0, z1) in enumerate(SEG):
         lm = pr.pose_landmarks.landmark if pr.pose_landmarks else None
         if lm is not None:
             core = mascara_esqueleto(lm, w, h, 0.72, 0, 9)       # miolo do corpo (sempre aceso)
-            larga = mascara_esqueleto(lm, w, h, 1.15, 21, 41)    # região onde o recorte é confiável
+            larga = mascara_esqueleto(lm, w, h, 0.98, 11, 31)    # região onde o recorte é confiável
             sm = np.maximum(core, sm * larga)
         branco_forte = np.clip((lum - 226) / 10, 0, 1) * (sat < 10)
         sm = sm * (1 - branco_forte)
