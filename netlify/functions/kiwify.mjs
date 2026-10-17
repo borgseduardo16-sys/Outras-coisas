@@ -21,7 +21,10 @@ function acharStatus(o) {
 
 export default async (req) => {
   const url = new URL(req.url);
-  const chaveOk = chaveConfere(url.searchParams.get('chave'), process.env.CHAVE_WEBHOOK);
+  // A Kiwify acrescenta "?signature=..." ao endereço; se ele já tem "?chave=...", a senha vem grudada
+  // ("XXXX?signature=YYYY"). Por isso lemos só os caracteres da senha, até o primeiro símbolo.
+  const chaveBruta = (url.searchParams.get('chave') || '').match(/^[A-Za-z0-9_-]*/)[0];
+  const chaveOk = chaveConfere(chaveBruta, process.env.CHAVE_WEBHOOK);
   const texto = req.method === 'POST' ? await req.text().catch(() => '') : '';
 
   // Anota toda tentativa (inclusive as recusadas) para conferência em /api/admin?acao=webhook.

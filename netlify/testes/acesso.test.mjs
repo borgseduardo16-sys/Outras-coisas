@@ -103,3 +103,11 @@ test('toda tentativa no webhook fica anotada, mesmo a recusada', async () => {
   const a = await resp(await ativar(post('/api/ativar', { email: 'novo@email.com', dispositivo: 'aparelho-888' })));
   assert.equal(a.ok, true);
 });
+
+test('webhook aceita a chave mesmo com "?signature=" colado pela Kiwify', async () => {
+  const r = await resp(await kiwify(post('/api/kiwify?chave=wh-chave?signature=17f3d362f9c9017fd39da60f1b1895e8bae7e339',
+    { order_id: 'x', order_status: 'paid', webhook_event_type: 'order_approved', Customer: { email: 'assin@email.com' } })));
+  assert.equal(r.acao, 'liberado');
+  const ruim = await resp(await kiwify(post('/api/kiwify?chave=outra?signature=abc', { order_status: 'paid' })));
+  assert.equal(ruim.status, 401);
+});
