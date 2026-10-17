@@ -111,3 +111,11 @@ test('webhook aceita a chave mesmo com "?signature=" colado pela Kiwify', async 
   const ruim = await resp(await kiwify(post('/api/kiwify?chave=outra?signature=abc', { order_status: 'paid' })));
   assert.equal(ruim.status, 401);
 });
+
+test('webhook aceita a chave no caminho (sem interrogação) e recusa a errada', async () => {
+  const ok = await resp(await kiwify(post('/api/kiwify/wh-chave?signature=abc123',
+    { order_status: 'paid', webhook_event_type: 'order_approved', Customer: { email: 'caminho@email.com' } })));
+  assert.equal(ok.acao, 'liberado');
+  const ruim = await resp(await kiwify(post('/api/kiwify/errada', { order_status: 'paid' })));
+  assert.equal(ruim.status, 401);
+});

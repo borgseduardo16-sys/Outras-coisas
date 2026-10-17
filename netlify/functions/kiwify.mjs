@@ -23,7 +23,9 @@ export default async (req) => {
   const url = new URL(req.url);
   // A Kiwify acrescenta "?signature=..." ao endereço; se ele já tem "?chave=...", a senha vem grudada
   // ("XXXX?signature=YYYY"). Por isso lemos só os caracteres da senha, até o primeiro símbolo.
-  const chaveBruta = (url.searchParams.get('chave') || '').match(/^[A-Za-z0-9_-]*/)[0];
+  // A senha também pode vir no caminho (/api/kiwify/SENHA), forma que dispensa "?" no endereço.
+  const doCaminho = url.pathname.split('/').filter(Boolean)[2] || '';
+  const chaveBruta = (doCaminho || url.searchParams.get('chave') || '').match(/^[A-Za-z0-9_-]*/)[0];
   const chaveOk = chaveConfere(chaveBruta, process.env.CHAVE_WEBHOOK);
   const texto = req.method === 'POST' ? await req.text().catch(() => '') : '';
 
@@ -51,4 +53,4 @@ export default async (req) => {
   return json({ ok: true, ignorado: status.join(',') || 'sem_status' });
 };
 
-export const config = { path: '/api/kiwify' };
+export const config = { path: ['/api/kiwify', '/api/kiwify/*'] };
