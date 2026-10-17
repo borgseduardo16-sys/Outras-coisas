@@ -13,7 +13,11 @@ D31.acesso = (() => {
   const gravar = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
 
   // Rodando como arquivo local ou em teste local: sem bloqueio.
-  const desligado = () => location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname) && !window.D31_TESTE_ACESSO;
+  /* INTERRUPTOR: false = o app abre direto (modo livre). Para exigir o e-mail da compra, troque para true
+   * (isso só vale a pena quando o webhook da Kiwify estiver liberando os compradores automaticamente). */
+  const CONTROLE_ATIVO = false;
+
+  const desligado = () => !CONTROLE_ATIVO || location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname) && !window.D31_TESTE_ACESSO;
 
   function dispositivo() {
     let id = ler(K_DISP);
