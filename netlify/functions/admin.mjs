@@ -5,7 +5,7 @@
  *   acao=resetar  email=...   apaga os aparelhos (quando o comprador troca de celular)
  *   acao=ver      email=...   mostra o cadastro
  *   acao=listar               lista os e-mails cadastrados
- *   acao=webhook              mostra o último aviso recebido da Kiwify
+ *   acao=webhook              mostra o último aviso aceito e a última tentativa (mesmo recusada)
  */
 import { liberar, cancelar, lerComprador, salvarComprador, normEmail, emailValido, chaveConfere, json, loja } from '../lib/acesso.mjs';
 
@@ -31,7 +31,10 @@ export default async (req) => {
       const { blobs } = await (await loja()).list();
       return json({ ok: true, total: blobs.length, emails: blobs.map((b) => b.key) });
     }
-    case 'webhook': return json({ ok: true, ultimo: await (await loja('logs')).get('ultimo-webhook', { type: 'json' }) });
+    case 'webhook': {
+      const l = await loja('logs');
+      return json({ ok: true, ultimo: await l.get('ultimo-webhook', { type: 'json' }), tentativa: await l.get('ultima-tentativa', { type: 'json' }) });
+    }
   }
   return json({ ok: false, erro: 'acao_desconhecida' }, 400);
 };

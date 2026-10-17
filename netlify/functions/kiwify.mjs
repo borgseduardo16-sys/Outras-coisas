@@ -21,13 +21,25 @@ function acharStatus(o) {
 
 export default async (req) => {
   const url = new URL(req.url);
-  if (!chaveConfere(url.searchParams.get('chave'), process.env.CHAVE_WEBHOOK)) return json({ ok: false, erro: 'chave' }, 401);
+  const chaveOk = chaveConfere(url.searchParams.get('chave'), process.env.CHAVE_WEBHOOK);
+  const texto = req.method === 'POST' ? await req.text().catch(() => '') : '';
+
+  // Anota toda tentativa (inclusive as recusadas) para conferência em /api/admin?acao=webhook.
+  // O corpo só é guardado quando a chave confere.
+  try {
+    await (await loja('logs')).setJSON('ultima-tentativa', {
+      recebido: new Date().toISOString(), metodo: req.method, chaveOk,
+      tipo: req.headers.get('content-type') || '', tamanho: texto.length,
+      corpoTexto: chaveOk ? texto.slice(0, 4000) : undefined,
+    });
+  } catch { /* o registro nunca derruba o webhook */ }
+
+  if (!chaveOk) return json({ ok: false, erro: 'chave' }, 401);
   if (req.method !== 'POST') return json({ ok: false, erro: 'metodo' }, 405);
   let corpo;
-  try { corpo = await req.json(); } catch { return json({ ok: false, erro: 'json' }, 400); }
+  try { corpo = JSON.parse(texto); } catch { return json({ ok: false, erro: 'json' }, 400); }
 
-  const logs = await loja('logs');
-  await logs.setJSON('ultimo-webhook', { recebido: new Date().toISOString(), corpo });
+  await (await loja('logs')).setJSON('ultimo-webhook', { recebido: new Date().toISOString(), corpo });
 
   const email = acharEmail(corpo), status = acharStatus(corpo);
   if (!emailValido(email)) return json({ ok: true, ignorado: 'sem_email' });

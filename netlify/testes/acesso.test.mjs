@@ -90,3 +90,16 @@ test('aviso de pagamento pendente não libera', async () => {
   const r = await resp(await ativar(post('/api/ativar', { email: 'pix@email.com', dispositivo: 'aparelho-777' })));
   assert.equal(r.erro, 'nao_encontrado');
 });
+
+test('toda tentativa no webhook fica anotada, mesmo a recusada', async () => {
+  await kiwify(post('/api/kiwify?chave=errada', { order_status: 'paid' }));
+  let wh = await resp(await admin(get('/api/admin?chave=adm-chave&acao=webhook')));
+  assert.equal(wh.tentativa.chaveOk, false);
+  assert.equal(wh.tentativa.corpoTexto, undefined, 'não guarda o corpo quando a chave está errada');
+  await kiwify(post('/api/kiwify?chave=wh-chave', { order_status: 'paid', Customer: { email: 'novo@email.com' } }));
+  wh = await resp(await admin(get('/api/admin?chave=adm-chave&acao=webhook')));
+  assert.equal(wh.tentativa.chaveOk, true);
+  assert.match(wh.tentativa.corpoTexto, /novo@email.com/);
+  const a = await resp(await ativar(post('/api/ativar', { email: 'novo@email.com', dispositivo: 'aparelho-888' })));
+  assert.equal(a.ok, true);
+});
