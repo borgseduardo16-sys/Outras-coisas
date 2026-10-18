@@ -30,21 +30,27 @@ export default async (req) => {
   const texto = req.method === 'POST' ? await req.text().catch(() => '') : '';
 
   // Anota toda tentativa (inclusive as recusadas) para conferência em /api/admin?acao=webhook.
-  // O corpo só é guardado quando a chave confere.
+  // Só guarda o resumo (nunca CPF, telefone ou IP do comprador).
+  const resumo = (corpo) => ({
+    evento: corpo?.webhook_event_type, status: corpo?.order_status, pedido: corpo?.order_ref || corpo?.order_id,
+    pagamento: corpo?.payment_method, email: acharEmail(corpo),
+  });
+  let parsed = null;
+  try { parsed = chaveOk && texto ? JSON.parse(texto) : null; } catch { /* corpo inválido */ }
   try {
     await (await loja('logs')).setJSON('ultima-tentativa', {
       recebido: new Date().toISOString(), metodo: req.method, chaveOk,
       tipo: req.headers.get('content-type') || '', tamanho: texto.length,
-      corpoTexto: chaveOk ? texto.slice(0, 4000) : undefined,
+      resumo: parsed ? resumo(parsed) : undefined,
     });
   } catch { /* o registro nunca derruba o webhook */ }
 
   if (!chaveOk) return json({ ok: false, erro: 'chave' }, 401);
   if (req.method !== 'POST') return json({ ok: false, erro: 'metodo' }, 405);
-  let corpo;
-  try { corpo = JSON.parse(texto); } catch { return json({ ok: false, erro: 'json' }, 400); }
+  if (!parsed) return json({ ok: false, erro: 'json' }, 400);
+  const corpo = parsed;
 
-  await (await loja('logs')).setJSON('ultimo-webhook', { recebido: new Date().toISOString(), corpo });
+  await (await loja('logs')).setJSON('ultimo-webhook', { recebido: new Date().toISOString(), resumo: resumo(corpo) });
 
   const email = acharEmail(corpo), status = acharStatus(corpo);
   if (!emailValido(email)) return json({ ok: true, ignorado: 'sem_email' });

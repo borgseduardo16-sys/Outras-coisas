@@ -81,7 +81,7 @@ test('painel: chave, liberar manual, resetar aparelhos, listar e último webhook
   const lista = await resp(await admin(get('/api/admin?chave=adm-chave&acao=listar')));
   assert.deepEqual(lista.emails.sort(), ['joao@email.com', 'maria@email.com']);
   const wh = await resp(await admin(get('/api/admin?chave=adm-chave&acao=webhook')));
-  assert.equal(wh.ultimo.corpo.order_status, 'refunded');
+  assert.equal(wh.ultimo.resumo.status, 'refunded');
 });
 
 test('aviso de pagamento pendente não libera', async () => {
@@ -99,7 +99,8 @@ test('toda tentativa no webhook fica anotada, mesmo a recusada', async () => {
   await kiwify(post('/api/kiwify?chave=wh-chave', { order_status: 'paid', Customer: { email: 'novo@email.com' } }));
   wh = await resp(await admin(get('/api/admin?chave=adm-chave&acao=webhook')));
   assert.equal(wh.tentativa.chaveOk, true);
-  assert.match(wh.tentativa.corpoTexto, /novo@email.com/);
+  assert.equal(wh.tentativa.resumo.email, 'novo@email.com');
+  assert.equal(wh.tentativa.corpoTexto, undefined);
   const a = await resp(await ativar(post('/api/ativar', { email: 'novo@email.com', dispositivo: 'aparelho-888' })));
   assert.equal(a.ok, true);
 });
@@ -118,4 +119,12 @@ test('webhook aceita a chave no caminho (sem interrogação) e recusa a errada',
   assert.equal(ok.acao, 'liberado');
   const ruim = await resp(await kiwify(post('/api/kiwify/errada', { order_status: 'paid' })));
   assert.equal(ruim.status, 401);
+});
+
+test('registros não guardam CPF, telefone nem IP do comprador', async () => {
+  await kiwify(post('/api/kiwify/wh-chave', { order_status: 'waiting_payment', webhook_event_type: 'pix_created',
+    Customer: { email: 'privado@email.com', CPF: '15005546774', mobile: '+5527920043361', ip: '2804:6f0::1' } }));
+  const wh = JSON.stringify(await resp(await admin(get('/api/admin?chave=adm-chave&acao=webhook'))));
+  assert.ok(wh.includes('privado@email.com'));
+  for (const sensivel of ['15005546774', '5527920043361', '2804:6f0']) assert.ok(!wh.includes(sensivel), sensivel);
 });
