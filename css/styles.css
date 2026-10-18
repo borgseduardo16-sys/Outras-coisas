@@ -475,3 +475,7 @@ body.tela-bloqueio { background: #000; }
 .acesso-cadeado { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #161616; color: #fff; }
 .acesso-cadeado svg { stroke: #fff; }
 .acesso-link { font: inherit; margin-top: 18px; background: none; border: 0; color: #9a9a9a; text-decoration: underline; cursor: pointer; font-size: 1rem; padding: 10px; }
+
+.acesso-aviso { margin-top: 8px; padding: 16px 18px; border-radius: 16px; background: rgba(255, 209, 102, .12); border: 2px solid #ffd166; }
+.acesso-aviso b { display: block; color: #ffd166; font-size: 1.1rem; margin-bottom: 6px; }
+.acesso-aviso p { font-size: 1.02rem !important; color: #f3ead2 !important; margin: 4px 0 0; }

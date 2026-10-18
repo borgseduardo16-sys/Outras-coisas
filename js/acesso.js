@@ -78,7 +78,10 @@ D31.acesso = (() => {
       h('h1', {}, 'Bem-vindo(a)!'),
       h('p', {}, 'Para começar, digite o e-mail que você usou na compra. Você só faz isso uma vez neste aparelho.'),
       form,
-      h('p', { class: 'acesso-ajuda' }, 'Seu acesso é pessoal e funciona em até 2 aparelhos.')));
+      h('div', { class: 'acesso-aviso', role: 'note' },
+        h('b', {}, 'Atenção: apenas 2 aparelhos'),
+        h('p', {}, 'Este acesso funciona em no máximo 2 aparelhos. Recomendamos usar o seu celular e o seu computador.'),
+        h('p', {}, 'Se o acesso for compartilhado com outras pessoas, ele será bloqueado.'))));
     setTimeout(() => campo.focus(), 50);
   }
 
