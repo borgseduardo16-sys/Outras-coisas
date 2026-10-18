@@ -1,5 +1,5 @@
 /* Service worker: deixa o app funcionar offline depois da primeira visita. */
-const VERSAO = 'd31-v5';
+const VERSAO = 'd31-v6';
 const ARQUIVOS = [
   './', 'index.html', 'css/styles.css', 'manifest.webmanifest', 'icons/icone-192.png', 'icons/icone-512.png',
   'js/util.js', 'js/data/exercises.js', 'js/data/program.js', 'js/data/content.js', 'js/storage.js', 'js/progress.js',

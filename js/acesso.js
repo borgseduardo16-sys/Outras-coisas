@@ -15,7 +15,7 @@ D31.acesso = (() => {
   // Rodando como arquivo local ou em teste local: sem bloqueio.
   /* INTERRUPTOR: false = o app abre direto (modo livre). Para exigir o e-mail da compra, troque para true
    * (isso só vale a pena quando o webhook da Kiwify estiver liberando os compradores automaticamente). */
-  const CONTROLE_ATIVO = false;
+  const CONTROLE_ATIVO = true;
 
   const desligado = () => !CONTROLE_ATIVO || location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname) && !window.D31_TESTE_ACESSO;
 
@@ -69,7 +69,7 @@ D31.acesso = (() => {
       if (r.ok && r.token) { gravar(K_TOKEN, r.token); gravar(K_BLOQ, null); document.body.className = ''; aoLiberar(); return; }
       if (r.erro === 'limite' || r.erro === 'cancelado') { telaBloqueio(r.erro); return; }
       aviso.textContent = {
-        nao_encontrado: 'Não encontramos uma compra com esse e-mail. Use o mesmo e-mail da compra na Kiwify.',
+        nao_encontrado: 'Não encontramos uma compra com esse e-mail. Use o mesmo e-mail da compra na Kiwify. Se você acabou de comprar, espere 2 minutos e tente de novo.',
         rede: 'Sem conexão. Conecte-se à internet para entrar pela primeira vez.',
       }[r.erro] || 'Não foi possível entrar agora. Tente de novo em instantes.';
     });
