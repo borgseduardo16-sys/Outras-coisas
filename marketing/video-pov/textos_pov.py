@@ -13,7 +13,7 @@ def ts(t):
 
 ev = [
     (2, "Cima", 0.0, FIM, r"{\an5\pos(540,330)\fscx90\fscy90\t(0,250,\fscx100\fscy100)\fad(200,0)}" + cima),
-    (2, "Baixo", 0.6, FIM, r"{\an5\pos(540,1440)\fscx90\fscy90\t(0,250,\fscx100\fscy100)\fad(200,0)}" + baixo),
+    (2, "Baixo", 0.6, FIM, r"{\an5\pos(540,1340)\fscx90\fscy90\t(0,250,\fscx100\fscy100)\fad(200,0)}" + baixo),
 ]
 # flash branco rápido nas transições do meio de cada clipe (4 s e 11,6 s); a troca de clipe usa o zoom do xfade
 for t in (3.96, 11.56):
@@ -28,8 +28,8 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cima,Montserrat ExtraBold,68,&H00FFFFFF,&H00FFFFFF,&H50000000,&H00000000,0,0,0,0,100,100,0,0,3,18,0,5,120,120,0,1
-Style: Baixo,Montserrat ExtraBold,68,&H00FFFFFF,&H00FFFFFF,&H50000000,&H00000000,0,0,0,0,100,100,0,0,3,18,0,5,120,120,0,1
+Style: Cima,Montserrat ExtraBold,74,&H00FFFFFF,&H00FFFFFF,&H50000000,&H00000000,0,0,0,0,100,100,0,0,3,18,0,5,120,120,0,1
+Style: Baixo,Montserrat ExtraBold,74,&H00FFFFFF,&H00FFFFFF,&H50000000,&H00000000,0,0,0,0,100,100,0,0,3,18,0,5,120,120,0,1
 Style: Flash,Montserrat Black,40,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
 
 [Events]
