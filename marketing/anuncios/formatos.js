@@ -8,6 +8,8 @@ const BG = '#0b0b0d';
 const css = `*{margin:0;padding:0;box-sizing:border-box}body{background:${BG}}
 .t{position:relative;overflow:hidden;background:${BG}}
 .c{position:absolute;background-image:url(${BASE});background-repeat:no-repeat}
+.fxp{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%),linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%),linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-composite:intersect}
+.fx3{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%);mask-image:linear-gradient(90deg,transparent 0,#000 6%)}
 .fx2{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 92%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-composite:intersect}
 .fx{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%)}`;
 // recorte da base: x,y,w,h (px da base) colocado em (dx,dy) com escala s
@@ -19,10 +21,11 @@ const formatos = {
   '2_STORIES_REELS_9x16_1080x1920': { w: 1080, h: 1920, html: crop(0, 0, 1024, 1536, 0, 255, 1080 / 1024 * 0.97 * 0 + 1330 / 1536, 'fx').replace('left:0px', 'left:' + (1080 - 1024 * 1330 / 1536) / 2 + 'px') },
   '3_HORIZONTAL_1.91x1_1200x628': { w: 1200, h: 628, html:
     crop(0, 0, 500, 880, 0, 0, 628 / 880, 'fx') +
-    crop(470, 314, 530, 342, 318, 20, 1.0, 'fx2') +
-    crop(587, 684, 377, 84, 375, 380, 0.95, 'fx2') +
-    crop(230, 1236, 562, 94, 375, 485, 0.9, 'fx2') +
-    crop(635, 35, 336, 265, 880, 170, 0.78, 'fx2') },
+    crop(470, 314, 554, 342, 318, 20, 1.0, 'fxp') +
+    crop(550, 684, 430, 84, 368, 380, 0.95, 'fxp') +
+    crop(230, 1236, 562, 94, 375, 485, 0.9, 'fxp') +
+    crop(635, 35, 336, 265, 880, 130, 0.78, 'fxp') +
+    crop(580, 810, 400, 120, 885, 360, 0.7, 'fxp') },
 };
 (async () => {
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
