@@ -8,6 +8,7 @@ const BG = '#0b0b0d';
 const css = `*{margin:0;padding:0;box-sizing:border-box}body{background:${BG}}
 .t{position:relative;overflow:hidden;background:${BG}}
 .c{position:absolute;background-image:url(${BASE});background-repeat:no-repeat}
+.fxs{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);mask-composite:intersect}
 .fxp{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%),linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%),linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-composite:intersect}
 .fx3{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%);mask-image:linear-gradient(90deg,transparent 0,#000 6%)}
 .fx2{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 92%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(180deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-composite:intersect}
@@ -17,8 +18,17 @@ const crop = (x, y, w, h, dx, dy, s, extra = '') =>
   `<div class="c ${extra}" style="left:${dx}px;top:${dy}px;width:${w * s}px;height:${h * s}px;background-size:${1024 * s}px ${1536 * s}px;background-position:${-x * s}px ${-y * s}px"></div>`;
 
 const formatos = {
-  '1_QUADRADO_1x1_1080x1080': { w: 1080, h: 1080, html: crop(0, 0, 1024, 1536, 190, 0, 1080 / 1536, 'fx') },
-  '2_STORIES_REELS_9x16_1080x1920': { w: 1080, h: 1920, html: crop(0, 0, 1024, 1536, 0, 255, 1080 / 1024 * 0.97 * 0 + 1330 / 1536, 'fx').replace('left:0px', 'left:' + (1080 - 1024 * 1330 / 1536) / 2 + 'px') },
+  '1_QUADRADO_1x1_1080x1080': { w: 1080, h: 1080, html:
+    crop(0, 0, 540, 1180, 0, 0, 1080 / 1180, 'fx') +
+    crop(635, 35, 336, 265, 815, 18, 0.74, 'fxp') +
+    crop(470, 314, 554, 342, 462, 200, 0.9, 'fxp') +
+    crop(550, 684, 430, 84, 470, 520, 0.9, 'fxp') +
+    crop(580, 808, 400, 120, 480, 610, 0.85, 'fxp') +
+    crop(580, 940, 400, 120, 480, 715, 0.85, 'fxp') +
+    crop(580, 1072, 400, 120, 480, 820, 0.85, 'fxp') +
+    crop(230, 1236, 562, 94, 500, 945, 0.9, 'fxp') },
+  '2_STORIES_REELS_9x16_1080x1920': { w: 1080, h: 1920, html:
+    crop(0, 0, 1024, 1536, (1080 - 1024 * 0.92) / 2, 240, 0.92, 'fxs') },
   '3_HORIZONTAL_1.91x1_1200x628': { w: 1200, h: 628, html:
     crop(0, 0, 500, 880, 0, 0, 628 / 880, 'fx') +
     crop(470, 314, 554, 342, 318, 20, 1.0, 'fxp') +
