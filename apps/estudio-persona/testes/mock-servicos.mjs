@@ -1,5 +1,6 @@
 /*
- * Imita o fal.ai (armazenamento + fila) e o ElevenLabs para testar o app sem gastar nada.
+ * Imita o fal.ai (armazenamento + fila, inclusive a voz) para testar o app sem gastar nada.
+ * Chaves: "teste-fal" funciona; "sem-saldo" responde como conta sem créditos; qualquer outra é recusada.
  * Uso: node mock-servicos.mjs <porta> <video.mp4> <voz.mp3>
  */
 import http from 'node:http';
@@ -19,24 +20,14 @@ export function criarMock({ video, mp3, passosAteFicarPronto = 3 }) {
     const b = await corpo(req);
     log.push({ metodo: req.method, caminho: u.pathname, auth: req.headers.authorization || req.headers['xi-api-key'] || null, tamanho: b.length, corpo: req.headers['content-type']?.includes('json') ? JSON.parse(b.toString() || 'null') : null });
 
-    // ---- ElevenLabs ----
-    if (u.pathname.startsWith('/v1/')) {
-      if (req.headers['xi-api-key'] !== 'teste-eleven') return json(res, 401, { detail: { message: 'Invalid API key' } });
-      if (u.pathname === '/v1/voices') {
-        return json(res, 200, { voices: [
-          { voice_id: 'v1', name: 'Camila', category: 'premade', labels: { gender: 'female', accent: 'brazilian' }, preview_url: null },
-          { voice_id: 'v2', name: 'Minha voz', category: 'cloned', labels: {} },
-        ] });
-      }
-      if (u.pathname.startsWith('/v1/text-to-speech/')) {
-        res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
-        return res.end(fs.readFileSync(mp3));
-      }
-    }
+    const chave = req.headers.authorization;
+    const recusar = () => (chave === 'Key sem-saldo'
+      ? json(res, 403, { detail: 'User is locked. Reason: Exhausted balance. Top up your balance at fal.ai/dashboard/billing.' })
+      : json(res, 401, { detail: 'Unauthorized' }));
 
     // ---- fal.ai: armazenamento ----
     if (u.pathname === '/storage/upload/initiate') {
-      if (req.headers.authorization !== 'Key teste-fal') return json(res, 401, { detail: 'Unauthorized' });
+      if (chave !== 'Key teste-fal') return recusar();
       const { file_name } = JSON.parse(b.toString());
       const id = Math.random().toString(36).slice(2);
       return json(res, 200, { upload_url: `${base}/upload/${id}`, file_url: `${base}/files/${id}/${file_name}` });
@@ -45,6 +36,10 @@ export function criarMock({ video, mp3, passosAteFicarPronto = 3 }) {
       arquivos.set(u.pathname.split('/')[2], { tipo: req.headers['content-type'], tamanho: b.length });
       res.writeHead(200); return res.end();
     }
+    if (u.pathname === '/voz.mp3') {
+      res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+      return res.end(fs.readFileSync(mp3));
+    }
     if (u.pathname === '/video.mp4') {
       res.writeHead(200, { 'Content-Type': 'video/mp4' });
       return res.end(fs.readFileSync(video));
@@ -52,7 +47,7 @@ export function criarMock({ video, mp3, passosAteFicarPronto = 3 }) {
 
     // ---- fal.ai: fila ----
     if (u.pathname.startsWith('/fila/')) {
-      if (req.headers.authorization !== 'Key teste-fal') return json(res, 401, { detail: 'Unauthorized' });
+      if (chave !== 'Key teste-fal') return recusar();
       const partes = u.pathname.split('/').slice(2);
       const st = /^(.*)\/requests\/([\w-]+)(\/status)?$/.exec(partes.join('/'));
       if (st && req.method === 'GET') {
@@ -65,6 +60,10 @@ export function criarMock({ video, mp3, passosAteFicarPronto = 3 }) {
           return json(res, 200, { status: 'COMPLETED', logs: [] });
         }
         if (p.endpoint.includes('falha')) return json(res, 422, { detail: [{ msg: 'audio_url: Audio is too long' }] });
+        if (p.endpoint.includes('/tts/')) {
+          if (p.entrada.voice === 'VozQueNaoExiste') return json(res, 422, { detail: [{ msg: 'voice: Voice not found' }] });
+          return json(res, 200, { audio: { url: `${base}/voz.mp3`, content_type: 'audio/mpeg' } });
+        }
         return json(res, 200, { video: { url: `${base}/video.mp4`, content_type: 'video/mp4' }, duration: 4 });
       }
       if (req.method === 'POST') {

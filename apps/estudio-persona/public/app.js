@@ -97,7 +97,7 @@ const RASCUNHO = 'persona:rascunho';
 function salvarRascunho() {
   try {
     localStorage.setItem(RASCUNHO, JSON.stringify({
-      texto: $('texto').value, vozId: $('voz').value, modeloVoz: $('modelo-voz').value,
+      texto: $('texto').value, voz: $('voz').value, vozOutra: $('voz-outra').value, modeloVoz: $('modelo-voz').value,
       ajustes: lerAjustes(), direcao: est.direcao, modeloId: est.modeloId, resolucao: est.resolucao,
       rapido: $('rapido').checked, formato: est.formato, personagemId: est.personagemId,
       endpoint: $('endpoint').value, extras: $('extras').value, audioId: est.audio?.id || null,
@@ -122,10 +122,10 @@ function trocarAba(etapa, nome) {
 function mostrarConexoes() {
   const e = est.estado;
   $('conexao-fal').classList.toggle('ok', e.fal);
-  $('conexao-eleven').classList.toggle('ok', e.eleven);
   $('conexao-fal').title = e.fal ? `fal.ai conectado (${e.falMascara})` : 'fal.ai não conectado';
-  $('conexao-eleven').title = e.eleven ? `ElevenLabs conectado (${e.elevenMascara})` : 'ElevenLabs não conectado';
   $('aviso-demo').hidden = e.fal;
+  $('nota-voz').hidden = e.fal;
+  $('nota-voz').textContent = 'Sem a chave do fal.ai, o botão abaixo cria um áudio silencioso, só para testar o app. Você também pode enviar um áudio pronto.';
 }
 
 /* ---------- 1. Personagem ---------- */
@@ -266,31 +266,28 @@ function atualizarContagem() {
   $('texto-contagem').textContent = `${n} caractere${n === 1 ? '' : 's'}`;
   $('texto-duracao').textContent = n ? `≈ ${fmtSeg(n / 15)} de fala` : '';
 }
-async function carregarVozes() {
-  const sel = $('voz');
-  const anterior = sel.value || lerRascunho().vozId;
-  try {
-    const { conectado, vozes } = await api('GET', '/api/vozes');
-    est.vozes = vozes;
-    sel.disabled = !conectado;
-    $('modelo-voz').disabled = !conectado;
-    if (!conectado) {
-      sel.replaceChildren(el('option', { value: '' }, 'Conecte o ElevenLabs em Configurações'));
-      $('nota-voz').hidden = false;
-      $('nota-voz').textContent = 'Sem o ElevenLabs conectado, o botão abaixo cria um áudio silencioso, só para testar o app. Você também pode enviar um áudio pronto.';
-      return;
-    }
-    $('nota-voz').hidden = true;
-    const grupos = {};
-    for (const v of vozes) (grupos[v.tipo === 'cloned' || v.tipo === 'generated' || v.tipo === 'professional' ? 'Minhas vozes' : 'Vozes da biblioteca'] ||= []).push(v);
-    sel.replaceChildren(...Object.entries(grupos).map(([nome, lista]) => el('optgroup', { label: nome },
-      lista.map((v) => el('option', { value: v.id }, v.descricao ? `${v.nome} · ${v.descricao}` : v.nome)))));
-    if (anterior && vozes.some((v) => v.id === anterior)) sel.value = anterior;
-  } catch (e) {
-    sel.replaceChildren(el('option', { value: '' }, 'Não foi possível carregar as vozes'));
-    $('nota-voz').hidden = false;
-    $('nota-voz').textContent = e.message;
-  }
+const OUTRA_VOZ = '__outra';
+const vozEscolhida = () => ($('voz').value === OUTRA_VOZ ? $('voz-outra').value.trim() : $('voz').value);
+function montarVozes() {
+  const r = lerRascunho();
+  const grupos = [['f', 'Femininas'], ['m', 'Masculinas'], ['n', 'Neutra']];
+  $('voz').replaceChildren(
+    ...grupos.map(([g, nome]) => el('optgroup', { label: nome }, est.estado.vozes.filter((v) => v.genero === g).map((v) => el('option', { value: v.id }, v.nome)))),
+    el('option', { value: OUTRA_VOZ }, 'Outra voz (nome ou ID)…'));
+  if (r.voz && [...$('voz').options].some((o) => o.value === r.voz)) $('voz').value = r.voz;
+  if (r.vozOutra) $('voz-outra').value = r.vozOutra;
+  $('modelo-voz').replaceChildren(...est.estado.modelosVoz.map((m) => el('option', { value: m.id }, `${m.nome} · ${m.resumo}`)));
+  if (r.modeloVoz && est.estado.modelosVoz.some((m) => m.id === r.modeloVoz)) $('modelo-voz').value = r.modeloVoz;
+  atualizarVoz();
+}
+function atualizarVoz() {
+  $('campo-voz-outra').hidden = $('voz').value !== OUTRA_VOZ;
+  const m = est.estado.modelosVoz.find((x) => x.id === $('modelo-voz').value);
+  const semAjustes = m && !m.ajustes;
+  for (const [, id] of AJUSTES) $(id).disabled = semAjustes;
+  $('ajustes-nota').hidden = !semAjustes;
+  const n = $('texto').value.trim().length;
+  $('custo-voz').textContent = !n || !m || !est.estado.fal ? '' : n * m.precoMil / 1000 < 0.01 ? 'menos de US$ 0,01' : `≈ ${fmtUsd(n * m.precoMil / 1000)}`;
 }
 function definirAudio(a) {
   est.audio = a;
@@ -310,19 +307,21 @@ const audioDesatualizado = () => est.audio?.origem === 'voz' && est.audio.texto 
 
 function ligarFala() {
   ligarAbas($('etapa-fala'));
-  $('texto').addEventListener('input', () => { atualizarContagem(); atualizarTudo(); salvarRascunho(); });
+  $('texto').addEventListener('input', () => { atualizarContagem(); atualizarVoz(); atualizarTudo(); salvarRascunho(); });
   for (const [, id] of AJUSTES) {
     const i = $(id);
     mostrarAjuste(i);
     i.addEventListener('input', () => { mostrarAjuste(i); salvarRascunho(); });
   }
-  $('voz').addEventListener('change', salvarRascunho);
-  $('modelo-voz').addEventListener('change', salvarRascunho);
+  $('voz').addEventListener('change', () => { atualizarVoz(); salvarRascunho(); if ($('voz').value === OUTRA_VOZ) $('voz-outra').focus(); });
+  $('voz-outra').addEventListener('input', salvarRascunho);
+  $('modelo-voz').addEventListener('change', () => { atualizarVoz(); salvarRascunho(); });
   $('gerar-voz').addEventListener('click', (e) => comCarregando(e.currentTarget, async () => {
     const texto = $('texto').value.trim();
     if (!texto) return avisar('Escreva o texto da fala primeiro.', 'erro');
+    if (!vozEscolhida()) return avisar('Digite o nome ou o ID da voz.', 'erro');
     try {
-      const a = await api('POST', '/api/voz', { texto, vozId: $('voz').value, modelo: $('modelo-voz').value, ajustes: lerAjustes() });
+      const a = await api('POST', '/api/voz', { texto, voz: vozEscolhida(), modeloVoz: $('modelo-voz').value, ajustes: lerAjustes() });
       definirAudio(a);
       $('audio-player').play().catch(() => {});
     } catch (err) { avisar(err.message, 'erro'); }
@@ -422,7 +421,7 @@ function problemas() {
   if (m?.personalizado && !/^[\w.-]+\/[\w./-]+$/.test($('endpoint').value.trim())) lista.push('Informe o endpoint do modelo no fal.ai.');
   const lim = m?.limiteSeg?.[est.resolucao];
   if (lim && est.audio?.duracao > lim) lista.push(`O ${m.nome} aceita até ${lim} s de áudio em ${est.resolucao}. Encurte a fala${m.resolucoes?.length > 1 ? ' ou troque a resolução' : ''}.`);
-  if (est.estado?.fal && est.audio?.demo) lista.push('Este áudio é silencioso (teste). Conecte o ElevenLabs e gere a voz de novo, ou envie um áudio.');
+  if (est.estado?.fal && est.audio?.demo) lista.push('Este áudio é silencioso (teste). Clique em “Gerar voz e ouvir” de novo para criar a voz de verdade.');
   return lista;
 }
 function atualizarTudo() {
@@ -473,6 +472,10 @@ function modoPalco(modo) {
 const ORDEM = ['enviando', 'na_fila', 'gerando', 'pronto'];
 function mostrarTrabalho(t) {
   est.trabalho = t;
+  // O resumo mostra os dados deste vídeo, não o que está no editor.
+  $('r-duracao').textContent = t.duracao ? fmtSeg(t.duracao) : '—';
+  $('r-modelo').textContent = `${t.modeloNome}${t.resolucao ? ' · ' + t.resolucao : ''}`;
+  $('r-custo').textContent = t.demo ? 'Grátis (demonstração)' : t.custoEstimado != null ? `≈ ${fmtUsd(t.custoEstimado)}` : 'Ver no fal.ai';
   const tela = $('tela');
   tela.dataset.formato = formatoDe(t.personagem);
   $('tela-vazia').hidden = true;
@@ -513,6 +516,7 @@ function mostrarTrabalho(t) {
     alerta.hidden = false;
     alerta.classList.add('erro');
     alerta.textContent = t.erro || 'A geração falhou.';
+    $('creditos').hidden = !/saldo/i.test(t.erro || '');
     modoPalco('erro');
     return;
   }
@@ -645,21 +649,18 @@ function abrirTrabalho(t) {
 function abrirConfig() {
   const e = est.estado;
   $('chave-fal').value = '';
-  $('chave-eleven').value = '';
   $('chave-fal').placeholder = e.fal ? `Chave salva (${e.falMascara}). Cole outra para trocar.` : 'Cole a chave da API do fal.ai';
-  $('chave-eleven').placeholder = e.eleven ? `Chave salva (${e.elevenMascara}). Cole outra para trocar.` : 'Cole a chave da API do ElevenLabs';
-  for (const s of ['fal', 'eleven']) { $(`status-${s}`).textContent = ''; $(`status-${s}`).className = 'servico-status'; }
+  $('status-fal').textContent = '';
+  $('status-fal').className = 'servico-status';
   $('modal-config').showModal();
 }
-async function salvarChaves() {
-  const corpo = {};
-  if ($('chave-fal').value.trim()) corpo.falKey = $('chave-fal').value.trim();
-  if ($('chave-eleven').value.trim()) corpo.elevenKey = $('chave-eleven').value.trim();
-  if (!Object.keys(corpo).length) return false;
-  const r = await api('POST', '/api/config', corpo);
+async function salvarChave() {
+  const chave = $('chave-fal').value.trim();
+  if (!chave) return false;
+  const r = await api('POST', '/api/config', { falKey: chave });
   Object.assign(est.estado, r);
   mostrarConexoes();
-  $('chave-fal').value = ''; $('chave-eleven').value = '';
+  $('chave-fal').value = '';
   return true;
 }
 function ligarConfig() {
@@ -667,20 +668,20 @@ function ligarConfig() {
   for (const b of $$('[data-abrir-config]')) b.addEventListener('click', abrirConfig);
   $('salvar-config').addEventListener('click', (e) => comCarregando(e.currentTarget, async () => {
     try {
-      const mudou = await salvarChaves();
+      const mudou = await salvarChave();
       $('modal-config').close();
-      if (mudou) { avisar('Configurações salvas.'); carregarVozes(); atualizarTudo(); }
+      if (mudou) { avisar('Chave salva.'); atualizarVoz(); atualizarTudo(); }
     } catch (err) { avisar(err.message, 'erro'); }
   }));
+  $('chave-fal').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('salvar-config').click(); } });
   for (const b of $$('[data-testar]')) b.addEventListener('click', (e) => comCarregando(e.currentTarget, async () => {
-    const s = b.dataset.testar;
-    const st = $(`status-${s}`);
+    const st = $('status-fal');
     try {
-      await salvarChaves();
-      const r = await api('POST', '/api/testar', { servico: s });
-      st.textContent = r.ok ? `Conectado.${r.msg ? ' ' + r.msg : ''}` : r.msg;
+      await salvarChave();
+      const r = await api('POST', '/api/testar', {});
+      st.textContent = r.ok ? 'Conectado.' : r.msg;
       st.className = `servico-status ${r.ok ? 'ok' : 'erro'}`;
-      if (r.ok && s === 'eleven') carregarVozes();
+      atualizarVoz();
       atualizarTudo();
     } catch (err) { st.textContent = err.message; st.className = 'servico-status erro'; }
   }));
@@ -698,7 +699,16 @@ async function iniciar() {
   $('gerar').addEventListener('click', gerar);
   $('novo').addEventListener('click', voltarPrevia);
   $('voltar').addEventListener('click', voltarPrevia);
-  $('tentar').addEventListener('click', () => { voltarPrevia(); if (!$('gerar').disabled) gerar(); });
+  $('tentar').addEventListener('click', (e) => comCarregando(e.currentTarget, async () => {
+    if (!est.trabalho) return;
+    try {
+      const t = await api('POST', `/api/trabalhos/${est.trabalho.id}/repetir`);
+      est.trabalho = t;
+      mostrarTrabalho(t);
+      acompanhar(t.id);
+      carregarTrabalhos();
+    } catch (err) { avisar(err.message, 'erro'); }
+  }));
   $('endpoint').addEventListener('input', () => { atualizarTudo(); salvarRascunho(); });
   $('extras').addEventListener('input', salvarRascunho);
   $('rapido').addEventListener('change', salvarRascunho);
@@ -708,12 +718,11 @@ async function iniciar() {
   est.modelos = estado.modelos;
   est.personagens = personagens;
   mostrarConexoes();
-  $('modelo-voz').replaceChildren(...estado.modelosVoz.map((m) => el('option', { value: m.id }, `${m.nome} · ${m.resumo}`)));
+  montarVozes();
 
   // Recupera o rascunho da última visita.
   const r = lerRascunho();
   if (r.texto) $('texto').value = r.texto;
-  if (r.modeloVoz && estado.modelosVoz.some((m) => m.id === r.modeloVoz)) $('modelo-voz').value = r.modeloVoz;
   if (r.ajustes) for (const [k, id] of AJUSTES) if (r.ajustes[k] != null) { $(id).value = r.ajustes[k]; mostrarAjuste($(id)); }
   if (r.direcao) Object.assign(est.direcao, r.direcao);
   if (r.modeloId && est.modelos.some((m) => m.id === r.modeloId)) est.modeloId = r.modeloId;
@@ -730,9 +739,9 @@ async function iniciar() {
   renderDirecao();
   renderModelos();
   atualizarContagem();
+  atualizarVoz();
   aplicarFormatoRecorte();
   atualizarPrompt();
-  await carregarVozes();
   await carregarTrabalhos();
 
   // Retoma o último áudio preparado.

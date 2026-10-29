@@ -1,7 +1,8 @@
 /*
  * Persona Studio: servidor local (sem dependências, Node 18+).
- * Guarda as chaves e os arquivos na pasta "dados/" deste computador e conversa com o fal.ai (vídeo)
- * e o ElevenLabs (voz). Abra com: node servidor.mjs  (ou dê dois cliques em iniciar.bat no Windows)
+ * Guarda a chave e os arquivos na pasta "dados/" deste computador e usa o fal.ai para tudo:
+ * voz (vozes do ElevenLabs hospedadas no fal) e vídeo. Uma conta, uma chave, um saldo.
+ * Abra com: node servidor.mjs  (ou dê dois cliques em iniciar.bat no Windows)
  */
 import http from 'node:http';
 import fs from 'node:fs';
@@ -14,10 +15,10 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { modelo, modelosPublicos, montarEntrada, montarPrompt, validar } from './lib/modelos.mjs';
 import * as fal from './lib/fal.mjs';
-import * as eleven from './lib/eleven.mjs';
+import * as voz from './lib/voz.mjs';
 import { wavSilencioso } from './lib/wav.mjs';
 
-const VERSAO = '1.0.0';
+const VERSAO = '1.1.0';
 const [maior, menor] = process.versions.node.split('.').map(Number);
 if (maior < 18 || (maior === 18 && menor < 17)) {
   console.error(`\n  Este app precisa do Node.js 18.17 ou mais novo (você tem ${process.versions.node}).\n  Baixe a versão LTS em https://nodejs.org e abra de novo.\n`);
@@ -42,7 +43,6 @@ function gravarJson(nome, valor) {
 
 let config = lerJson('config.json', {});
 const chaveFal = () => process.env.FAL_KEY || config.falKey || '';
-const chaveEleven = () => process.env.ELEVEN_KEY || config.elevenKey || '';
 const mascara = (k) => (k ? '•••• ' + k.slice(-4) : '');
 
 let personagens = lerJson('personagens.json', []);
@@ -166,8 +166,8 @@ async function iniciarRemoto(t) {
 function traduzirErro(e) {
   const m = String(e?.message || e);
   if (/fetch failed|ENOTFOUND|ECONNREFUSED|ETIMEDOUT/i.test(m)) return 'Sem conexão com o serviço. Confira sua internet e tente de novo.';
-  if (e?.status === 401 || e?.status === 403) return 'Chave do fal.ai recusada. Confira em Configurações.';
-  if (e?.status === 402 || /balance|credit|payment|insufficient/i.test(m)) return 'Saldo insuficiente no fal.ai. Adicione créditos na sua conta do fal.ai.';
+  if (e?.status === 402 || /exhausted|balance|locked|top.?up|insufficient|credit/i.test(m)) return fal.MSG_SALDO;
+  if (e?.status === 401 || e?.status === 403) return fal.MSG_CHAVE;
   if (e?.status === 404) return 'O modelo não foi encontrado no fal.ai. Confira o endpoint.';
   return m.slice(0, 400);
 }
@@ -227,45 +227,24 @@ const rotas = [];
 const rota = (metodo, padrao, fn) => rotas.push({ metodo, padrao, fn });
 
 rota('GET', /^\/api\/estado$/, async () => ({
-  versao: VERSAO, fal: Boolean(chaveFal()), eleven: Boolean(chaveEleven()),
-  falMascara: mascara(chaveFal()), elevenMascara: mascara(chaveEleven()),
-  modelos: modelosPublicos(), modelosVoz: eleven.MODELOS_VOZ,
+  versao: VERSAO, fal: Boolean(chaveFal()), falMascara: mascara(chaveFal()),
+  modelos: modelosPublicos(), modelosVoz: voz.MODELOS_VOZ, vozes: voz.VOZES,
 }));
 
 rota('POST', /^\/api\/config$/, async (req) => {
   const c = await lerCorpo(req);
-  for (const [campo, nome] of [['falKey', 'falKey'], ['elevenKey', 'elevenKey']]) {
-    if (typeof c[campo] === 'string') {
-      const v = c[campo].trim();
-      if (v) config[nome] = v; else delete config[nome];
-    }
+  if (typeof c.falKey === 'string') {
+    const v = c.falKey.trim();
+    if (v) config.falKey = v; else delete config.falKey;
   }
+  delete config.elevenKey; // versões antigas usavam uma chave separada para a voz
   gravarJson('config.json', config);
-  cacheVozes = null;
-  return { ok: true, fal: Boolean(chaveFal()), eleven: Boolean(chaveEleven()), falMascara: mascara(chaveFal()), elevenMascara: mascara(chaveEleven()) };
+  return { ok: true, fal: Boolean(chaveFal()), falMascara: mascara(chaveFal()) };
 });
 
-rota('POST', /^\/api\/testar$/, async (req) => {
-  const { servico } = await lerCorpo(req);
-  try {
-    if (servico === 'fal') {
-      if (!chaveFal()) return { ok: false, msg: 'Nenhuma chave salva.' };
-      return await fal.testarChave(chaveFal());
-    }
-    if (servico === 'eleven') {
-      if (!chaveEleven()) return { ok: false, msg: 'Nenhuma chave salva.' };
-      const v = await eleven.vozes(chaveEleven());
-      return { ok: true, msg: `${v.length} vozes encontradas.` };
-    }
-  } catch (e) { return { ok: false, msg: traduzirErro(e) }; }
-  return { ok: false, msg: 'Serviço desconhecido.' };
-});
-
-let cacheVozes = null;
-rota('GET', /^\/api\/vozes$/, async () => {
-  if (!chaveEleven()) return { conectado: false, vozes: [] };
-  if (!cacheVozes || Date.now() - cacheVozes.em > 10 * 60 * 1000) cacheVozes = { em: Date.now(), vozes: await eleven.vozes(chaveEleven()) };
-  return { conectado: true, vozes: cacheVozes.vozes };
+rota('POST', /^\/api\/testar$/, async () => {
+  if (!chaveFal()) return { ok: false, msg: 'Nenhuma chave salva.' };
+  try { return await fal.testarChave(chaveFal()); } catch (e) { return { ok: false, msg: traduzirErro(e) }; }
 });
 
 rota('POST', /^\/api\/prompt$/, async (req) => ({ prompt: montarPrompt((await lerCorpo(req)).direcao) }));
@@ -316,32 +295,36 @@ rota('POST', /^\/api\/voz$/, async (req) => {
   const texto = String(c.texto || '').trim();
   if (!texto) throw new ErroUsuario('Escreva o texto da fala.');
   if (texto.length > 4000) throw new ErroUsuario('Texto longo demais (máx. 4.000 caracteres).');
-  const demo = !chaveEleven();
-  const chaveCache = crypto.createHash('sha1').update(JSON.stringify([demo, texto, c.vozId, c.modelo, c.ajustes])).digest('hex').slice(0, 16);
+  const demo = !chaveFal();
+  const vozEscolhida = String(c.voz || '').trim().slice(0, 80);
+  if (!demo && !vozEscolhida) throw new ErroUsuario('Escolha uma voz.');
+  const chaveCache = crypto.createHash('sha1').update(JSON.stringify([demo, texto, vozEscolhida, c.modeloVoz, c.ajustes])).digest('hex').slice(0, 16);
   const existente = audios.find((a) => a.cache === chaveCache && fs.existsSync(path.join(DADOS, PASTAS.audios, a.arquivo)));
   if (existente) return pubAudio(existente);
   let buffer, ext, duracao;
   if (demo) {
-    // Sem ElevenLabs: áudio silencioso com a duração aproximada da fala, só para testar o fluxo.
+    // Sem a chave: áudio silencioso com a duração aproximada da fala, só para testar o fluxo.
     duracao = Math.max(2, Math.round((texto.length / 15) * 10) / 10);
     buffer = wavSilencioso(duracao);
     ext = '.wav';
   } else {
-    if (!c.vozId) throw new ErroUsuario('Escolha uma voz.');
-    buffer = await eleven.falar(chaveEleven(), { texto, vozId: c.vozId, modelo: c.modelo, ajustes: c.ajustes });
-    ext = '.mp3';
-    duracao = Math.round((buffer.length * 8 / 128000) * 10) / 10; // MP3 a 128 kbps
+    try {
+      ({ buffer, ext } = await voz.falar(chaveFal(), { texto, voz: vozEscolhida, modeloId: c.modeloVoz, ajustes: c.ajustes }));
+    } catch (e) {
+      if (e?.status === 422 && /voice/i.test(e?.message || '')) throw new ErroUsuario(`O fal.ai não aceitou a voz “${vozEscolhida}”. Escolha uma voz da lista.`);
+      throw e;
+    }
+    duracao = null; // o navegador mede a duração exata ao carregar o áudio
   }
   const id = novoId();
-  const a = { id, arquivo: id + ext, origem: 'voz', texto, vozId: c.vozId || null, duracao, demo, cache: chaveCache, criado: agora() };
+  const a = { id, arquivo: id + ext, origem: 'voz', texto, voz: vozEscolhida || null, duracao, demo, cache: chaveCache, criado: agora() };
   await fsp.writeFile(path.join(DADOS, PASTAS.audios, a.arquivo), buffer);
   audios.push(a);
   gravarJson('audios.json', audios);
   return pubAudio(a);
 });
 
-rota('POST', /^\/api\/gerar$/, async (req) => {
-  const c = await lerCorpo(req);
+function criarTrabalho(c) {
   if (!c.consentimento) throw new ErroUsuario('Confirme que você tem o direito de usar esta imagem e esta voz.');
   const p = personagens.find((x) => x.id === c.personagemId);
   if (!p) throw new ErroUsuario('Escolha o personagem.');
@@ -351,13 +334,14 @@ rota('POST', /^\/api\/gerar$/, async (req) => {
   const duracao = Number(c.duracao) || a.duracao || 0;
   let extras = null;
   if (m?.personalizado && c.extras) {
-    try { extras = JSON.parse(c.extras); } catch { throw new ErroUsuario('Os campos extras precisam estar em JSON válido.'); }
+    if (typeof c.extras === 'object') extras = c.extras;
+    else try { extras = JSON.parse(c.extras); } catch { throw new ErroUsuario('Os campos extras precisam estar em JSON válido.'); }
   }
   const problema = validar(m, { duracao, resolucao: c.resolucao, endpoint: c.endpoint });
   if (problema) throw new ErroUsuario(problema);
   const resolucao = m.resolucoes ? (m.resolucoes.includes(c.resolucao) ? c.resolucao : m.resolucaoPadrao) : null;
   const demo = !chaveFal();
-  if (!demo && a.demo) throw new ErroUsuario('Este áudio é silencioso (feito no modo demonstração). Conecte o ElevenLabs e gere a voz de novo, ou envie um arquivo de áudio.');
+  if (!demo && a.demo) throw new ErroUsuario('Este áudio é silencioso (feito no modo demonstração). Gere a voz de novo agora que o fal.ai está conectado, ou envie um arquivo de áudio.');
   const t = {
     id: novoId(), criado: agora(), atualizado: agora(), status: 'enviando', demo,
     modeloId: m.id, modeloNome: m.personalizado ? c.endpoint : m.nome, endpoint: m.personalizado ? c.endpoint : m.endpoint,
@@ -370,6 +354,18 @@ rota('POST', /^\/api\/gerar$/, async (req) => {
   salvarTrabalhos();
   if (!demo) iniciarRemoto(t);
   return pubTrabalho(t);
+}
+
+rota('POST', /^\/api\/gerar$/, async (req) => criarTrabalho(await lerCorpo(req)));
+
+/** Gera de novo com as mesmas escolhas de um vídeo do histórico (ex.: depois de recarregar o saldo). */
+rota('POST', /^\/api\/trabalhos\/(\w+)\/repetir$/, async (req, [, id]) => {
+  const t = trabalhos.find((x) => x.id === id);
+  if (!t) throw new ErroUsuario('Vídeo não encontrado.');
+  return criarTrabalho({
+    consentimento: true, personagemId: t.personagemId, audioId: t.audioId, duracao: t.duracao,
+    modeloId: t.modeloId, endpoint: t.endpoint, resolucao: t.resolucao, rapido: t.rapido, extras: t.extras, direcao: t.direcao,
+  });
 });
 
 rota('GET', /^\/api\/trabalhos$/, async () => {
@@ -422,6 +418,7 @@ const servidor = http.createServer(async (req, res) => {
     servirArquivo(req, res, arq);
   } catch (e) {
     if (e instanceof ErroUsuario) return json(res, 400, { erro: e.message });
+    if (e instanceof fal.ErroFal) return json(res, 502, { erro: traduzirErro(e) });
     console.error(e);
     json(res, 500, { erro: traduzirErro(e) });
   }

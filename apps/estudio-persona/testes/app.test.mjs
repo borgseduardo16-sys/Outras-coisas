@@ -8,6 +8,7 @@ import { spawn, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { MODELOS, modelo, montarEntrada, montarPrompt, validar } from '../lib/modelos.mjs';
 import { acharVideo } from '../lib/fal.mjs';
+import { modeloVoz, montarEntradaVoz } from '../lib/voz.mjs';
 import { criarMock } from './mock-servicos.mjs';
 
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -49,6 +50,13 @@ test('cada modelo monta o corpo com os campos certos', () => {
   for (const m of MODELOS) assert.ok(m.endpoint || m.personalizado, m.id);
 });
 
+test('voz: campos enviados ao fal.ai', () => {
+  const v2 = montarEntradaVoz(modeloVoz('multilingual-v2'), { texto: 'Oi', voz: 'Sarah', ajustes: { velocidade: 1.5, estabilidade: 0.3 } });
+  assert.deepEqual(v2, { text: 'Oi', voice: 'Sarah', stability: 0.3, similarity_boost: 0.8, style: 0.25, speed: 1.2 });
+  assert.deepEqual(montarEntradaVoz(modeloVoz('eleven-v3'), { texto: 'Oi', voz: 'Liam' }), { text: 'Oi', voice: 'Liam' });
+  assert.equal(montarEntradaVoz(modeloVoz('turbo-v2.5'), { texto: 'Oi', voz: 'Liam' }).language_code, 'pt');
+});
+
 test('limites de duração', () => {
   assert.match(validar(modelo('omnihuman-15'), { duracao: 40, resolucao: '1080p' }), /até 30 s/);
   assert.equal(validar(modelo('omnihuman-15'), { duracao: 40, resolucao: '720p' }), null);
@@ -88,30 +96,34 @@ async function esperarFim(api, id) {
   throw new Error('não terminou');
 }
 
-test('fluxo completo com fal.ai e ElevenLabs simulados', async () => {
+test('fluxo completo com o fal.ai simulado (voz e vídeo na mesma conta)', async () => {
   const mock = criarMock({ video: VIDEO, mp3: MP3 });
   const m = await mock.ouvir();
-  const app = await subirApp({ FAL_FILA_URL: `${m}/fila`, FAL_REST_URL: m, ELEVEN_URL: m });
+  const app = await subirApp({ FAL_FILA_URL: `${m}/fila`, FAL_REST_URL: m });
   try {
     let r = await app.api('GET', '/api/estado');
     assert.equal(r.j.fal, false);
 
-    r = await app.api('POST', '/api/config', { falKey: 'teste-fal', elevenKey: 'teste-eleven' });
+    assert.ok(r.j.vozes.length >= 10);
+    r = await app.api('POST', '/api/config', { falKey: 'teste-fal' });
     assert.equal(r.j.falMascara, '•••• -fal');
-    assert.equal((await app.api('POST', '/api/testar', { servico: 'eleven' })).j.ok, true);
+    assert.equal((await app.api('POST', '/api/testar', {})).j.ok, true);
 
-    const vozes = (await app.api('GET', '/api/vozes')).j.vozes;
-    assert.equal(vozes.length, 2);
-
-    const audio = (await app.api('POST', '/api/voz', { texto: 'Oi, tudo bem?', vozId: 'v1', modelo: 'eleven_multilingual_v2', ajustes: { velocidade: 1.1 } })).j;
+    const pedirVoz = (extra = {}) => app.api('POST', '/api/voz', { texto: 'Oi, tudo bem?', voz: 'Sarah', modeloVoz: 'multilingual-v2', ajustes: { velocidade: 1.1 }, ...extra });
+    const audio = (await pedirVoz()).j;
     assert.equal(audio.demo, false);
-    assert.ok(audio.duracao > 2.5 && audio.duracao < 3.6, `duração ${audio.duracao}`);
-    const tts = mock.log.find((l) => l.caminho === '/v1/text-to-speech/v1');
-    assert.equal(tts.corpo.voice_settings.speed, 1.1);
+    assert.ok(audio.url.endsWith('.mp3'));
+    const tts = [...mock.pedidos.values()].find((p) => p.endpoint === 'fal-ai/elevenlabs/tts/multilingual-v2');
+    assert.equal(tts.entrada.voice, 'Sarah');
+    assert.equal(tts.entrada.speed, 1.1);
     // Mesma fala de novo usa o cache (não paga duas vezes).
-    const audio2 = (await app.api('POST', '/api/voz', { texto: 'Oi, tudo bem?', vozId: 'v1', modelo: 'eleven_multilingual_v2', ajustes: { velocidade: 1.1 } })).j;
-    assert.equal(audio2.id, audio.id);
-    assert.equal(mock.log.filter((l) => l.caminho.startsWith('/v1/text-to-speech')).length, 1);
+    assert.equal((await pedirVoz()).j.id, audio.id);
+    assert.equal([...mock.pedidos.values()].filter((p) => p.endpoint.includes('/tts/')).length, 1);
+    // Voz inexistente vira mensagem clara.
+    r = await pedirVoz({ voz: 'VozQueNaoExiste' });
+    assert.equal(r.status, 400);
+    assert.match(r.j.erro, /não aceitou a voz/);
+    audio.duracao = 3;
 
     const pers = (await app.api('POST', '/api/personagens', { nome: 'Ana', imagem: dataUrl(IMG, 'image/jpeg'), largura: 1080, altura: 1920 })).j;
     assert.equal(pers.nome, 'Ana');
@@ -126,7 +138,7 @@ test('fluxo completo com fal.ai e ElevenLabs simulados', async () => {
     assert.equal(fim.status, 'pronto', fim.erro);
     assert.ok(fim.video);
 
-    const [pedido] = [...mock.pedidos.values()];
+    const pedido = [...mock.pedidos.values()].find((p) => p.endpoint.includes('omnihuman'));
     assert.equal(pedido.endpoint, 'fal-ai/bytedance/omnihuman/v1.5');
     assert.match(pedido.entrada.image_url, /^http:\/\/127\.0\.0\.1:\d+\/files\//);
     assert.match(pedido.entrada.audio_url, /\/files\//);
@@ -155,7 +167,20 @@ test('fluxo completo com fal.ai e ElevenLabs simulados', async () => {
     assert.equal((await app.api('GET', '/api/trabalhos')).j.length, 1);
     assert.equal(fs.existsSync(path.join(app.dados, 'videos', `${fim.id}.mp4`)), false);
 
-    // Chave errada vira mensagem clara.
+    // Saldo acabou: a mensagem fala de saldo (não de chave errada) e, depois de recarregar, "tentar de novo" funciona.
+    await app.api('POST', '/api/config', { falKey: 'sem-saldo' });
+    assert.match((await app.api('POST', '/api/testar', {})).j.msg, /saldo no fal.ai acabou/);
+    r = await app.api('POST', '/api/gerar', { personagemId: pers.id, audioId: audio.id, duracao: audio.duracao, modeloId: 'fabric', direcao: {}, consentimento: true });
+    const semSaldo = await esperarFim(app.api, r.j.id);
+    assert.match(semSaldo.erro, /saldo no fal.ai acabou/);
+    r = await pedirVoz({ texto: 'Outro texto' });
+    assert.match(r.j.erro, /saldo no fal.ai acabou/);
+    await app.api('POST', '/api/config', { falKey: 'teste-fal' });
+    r = await app.api('POST', `/api/trabalhos/${semSaldo.id}/repetir`);
+    assert.equal(r.j.modelo, 'fabric');
+    assert.equal((await esperarFim(app.api, r.j.id)).status, 'pronto');
+
+    // Chave errada vira mensagem de chave.
     await app.api('POST', '/api/config', { falKey: 'errada' });
     r = await app.api('POST', '/api/gerar', { personagemId: pers.id, audioId: audio.id, duracao: audio.duracao, modeloId: 'fabric', direcao: {}, consentimento: true });
     const recusado = await esperarFim(app.api, r.j.id);
@@ -167,7 +192,7 @@ test('fluxo completo com fal.ai e ElevenLabs simulados', async () => {
 });
 
 test('modo demonstração funciona sem nenhuma chave', async () => {
-  const app = await subirApp({ FAL_FILA_URL: 'http://127.0.0.1:9/x', ELEVEN_URL: 'http://127.0.0.1:9' });
+  const app = await subirApp({ FAL_FILA_URL: 'http://127.0.0.1:9/x' });
   try {
     const audio = (await app.api('POST', '/api/voz', { texto: 'Um texto de teste com uns trinta caracteres' })).j;
     assert.equal(audio.demo, true);

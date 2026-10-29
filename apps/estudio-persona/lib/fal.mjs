@@ -26,6 +26,17 @@ export class ErroFal extends Error {
   constructor(msg, status) { super(msg); this.status = status; }
 }
 
+export const MSG_SALDO = 'Seu saldo no fal.ai acabou. Adicione créditos em fal.ai/dashboard/billing e clique em "Tentar de novo".';
+export const MSG_CHAVE = 'Chave do fal.ai recusada. Confira em Configurações.';
+
+/** Transforma a resposta de erro do fal.ai numa mensagem clara (saldo acabou ≠ chave errada). */
+async function erroDe(r) {
+  const msg = await lerErro(r);
+  if (/exhausted|balance|locked|top.?up|insufficient|credit|billing|payment/i.test(msg) || r.status === 402) return new ErroFal(MSG_SALDO, 402);
+  if (r.status === 401 || r.status === 403) return new ErroFal(MSG_CHAVE, r.status);
+  return new ErroFal(msg, r.status);
+}
+
 /** Envia um arquivo e devolve o endereço público dele. Se o envio falhar, usa o arquivo embutido (data URI). */
 export async function enviarArquivo(chave, buffer, tipo, nome) {
   for (const base of REST()) {
@@ -35,7 +46,7 @@ export async function enviarArquivo(chave, buffer, tipo, nome) {
         headers: cabecalho(chave, { 'Content-Type': 'application/json' }),
         body: JSON.stringify({ content_type: tipo, file_name: nome }),
       });
-      if (r.status === 401 || r.status === 403) throw new ErroFal('Chave do fal.ai recusada. Confira em Configurações.', r.status);
+      if (r.status === 401 || r.status === 402 || r.status === 403) throw await erroDe(r);
       if (!r.ok) continue;
       const { upload_url, file_url } = await r.json();
       if (!upload_url || !file_url) continue;
@@ -55,7 +66,7 @@ export async function enfileirar(chave, endpoint, entrada) {
     headers: cabecalho(chave, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(entrada),
   });
-  if (!r.ok) throw new ErroFal(await lerErro(r), r.status);
+  if (!r.ok) throw await erroDe(r);
   const j = await r.json();
   if (!j.request_id) throw new ErroFal('O fal.ai não devolveu o número do pedido.');
   // Se o fal não mandar os endereços, monta pelo padrão (o caminho usa só "dono/app").
@@ -72,34 +83,52 @@ export async function consultar(chave, statusUrl) {
   const u = new URL(statusUrl);
   u.searchParams.set('logs', '1');
   const r = await fetch(u, { headers: cabecalho(chave) });
-  if (!r.ok && r.status !== 202) throw new ErroFal(await lerErro(r), r.status);
+  if (!r.ok && r.status !== 202) throw await erroDe(r);
   return r.json();
 }
 
 /** Resultado final do modelo (formato varia de modelo para modelo). */
 export async function resultado(chave, responseUrl) {
   const r = await fetch(responseUrl, { headers: cabecalho(chave) });
-  if (!r.ok) throw new ErroFal(await lerErro(r), r.status);
+  if (!r.ok) throw await erroDe(r);
   return r.json();
 }
 
-/** Procura o endereço do vídeo dentro do resultado (video.url, videos[0].url ou qualquer .mp4). */
-export function acharVideo(res) {
-  if (res?.video?.url) return res.video.url;
-  if (Array.isArray(res?.videos) && res.videos[0]?.url) return res.videos[0].url;
+/** Procura um arquivo de certo tipo dentro do resultado (campo direto ou qualquer URL com a extensão). */
+function acharArquivo(res, campo, exts) {
+  if (res?.[campo]?.url) return res[campo].url;
+  if (Array.isArray(res?.[campo + 's']) && res[campo + 's'][0]?.url) return res[campo + 's'][0].url;
+  const padrao = new RegExp(`^https?://\\S+\\.(${exts})(\\?|$)`, 'i');
   let achado = null;
   const visitar = (v) => {
     if (achado || v == null) return;
-    if (typeof v === 'string') { if (/^https?:\/\/\S+\.(mp4|mov|webm)(\?|$)/i.test(v)) achado = v; return; }
+    if (typeof v === 'string') { if (padrao.test(v)) achado = v; return; }
     if (typeof v === 'object') for (const x of Object.values(v)) visitar(x);
   };
   visitar(res);
   return achado;
 }
+export const acharVideo = (res) => acharArquivo(res, 'video', 'mp4|mov|webm');
+export const acharAudio = (res) => acharArquivo(res, 'audio', 'mp3|wav|ogg|m4a|aac');
+
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Pedido curto (ex.: voz): coloca na fila e espera o resultado. */
+export async function executar(chave, endpoint, entrada, { intervalo = 1000, limite = 180000 } = {}) {
+  const req = await enfileirar(chave, endpoint, entrada);
+  const inicio = Date.now();
+  for (;;) {
+    const s = await consultar(chave, req.status_url);
+    if (s.status === 'COMPLETED') break;
+    if (Date.now() - inicio > limite) throw new ErroFal('O fal.ai demorou demais para responder. Tente de novo.');
+    await esperar(intervalo);
+  }
+  return resultado(chave, req.response_url);
+}
 
 /** Testa a chave sem gastar nada: consulta um pedido inexistente (401 = chave errada; 404/400 = chave ok). */
 export async function testarChave(chave) {
   const r = await fetch(`${FILA()}/fal-ai/fast-sdxl/requests/00000000-0000-0000-0000-000000000000/status`, { headers: cabecalho(chave) });
-  if (r.status === 401 || r.status === 403) return { ok: false, msg: 'Chave recusada pelo fal.ai.' };
+  if (r.status === 401 || r.status === 402 || r.status === 403) return { ok: false, msg: (await erroDe(r)).message };
   return { ok: true };
 }

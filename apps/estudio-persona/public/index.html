@@ -18,7 +18,7 @@
     </div>
     <div class="topo-dir">
       <span class="conexao" id="conexao-fal"><i></i><span>fal.ai</span></span>
-      <span class="conexao" id="conexao-eleven"><i></i><span>ElevenLabs</span></span>
+      <a class="conexao conexao-link" href="https://fal.ai/dashboard/billing" target="_blank" rel="noopener" title="Ver saldo e adicionar créditos no fal.ai"><span>Saldo</span></a>
       <button class="btn btn-sec" id="abrir-config" type="button" data-icone="ajustes" aria-label="Configurações"><span class="btn-texto">Configurações</span></button>
     </div>
   </header>
@@ -101,6 +101,8 @@
             <label class="campo"><span class="rotulo">Voz</span><select id="voz"></select></label>
             <label class="campo"><span class="rotulo">Modelo de voz</span><select id="modelo-voz"></select></label>
           </div>
+          <label class="campo" id="campo-voz-outra" hidden><span class="rotulo">Nome ou ID da voz <em>(da biblioteca do ElevenLabs)</em></span>
+            <input type="text" id="voz-outra" maxlength="80" placeholder="Ex.: Sarah ou um ID de voz"></label>
           <p class="nota" id="nota-voz" hidden></p>
           <details class="detalhes">
             <summary>Ajustes da voz</summary>
@@ -109,10 +111,12 @@
               <label class="ajuste"><span>Semelhança <em>fidelidade à voz original</em></span><input type="range" id="aj-similaridade" min="0" max="1" step="0.05" value="0.8"><output></output></label>
               <label class="ajuste"><span>Estilo <em>mais emoção e entonação</em></span><input type="range" id="aj-estilo" min="0" max="1" step="0.05" value="0.25"><output></output></label>
               <label class="ajuste"><span>Velocidade</span><input type="range" id="aj-velocidade" min="0.7" max="1.2" step="0.05" value="1"><output></output></label>
+              <p class="nota" id="ajustes-nota" hidden>O Eleven v3 controla a emoção pelo próprio texto e pelas marcações. Estes ajustes não se aplicam a ele.</p>
             </div>
           </details>
           <div class="acoes">
             <button class="btn btn-sec" id="gerar-voz" type="button" data-icone="som">Gerar voz e ouvir</button>
+            <span class="sub custo-voz" id="custo-voz"></span>
           </div>
         </div>
 
@@ -213,6 +217,7 @@
           <button class="btn btn-sec" id="novo" type="button">Fazer outro</button>
         </div>
         <div class="palco-acoes" id="acoes-erro" hidden>
+          <a class="btn btn-sec" id="creditos" href="https://fal.ai/dashboard/billing" target="_blank" rel="noopener" hidden>Adicionar créditos</a>
           <button class="btn btn-pri" id="tentar" type="button">Tentar de novo</button>
           <button class="btn btn-sec" id="voltar" type="button">Voltar</button>
         </div>
@@ -232,26 +237,17 @@
   <dialog class="modal" id="modal-config">
     <form method="dialog" class="modal-corpo" id="form-config">
       <header class="modal-cab"><h2>Configurações</h2><button class="icone-btn" value="fechar" aria-label="Fechar" data-icone="x"></button></header>
-      <p class="modal-intro">As chaves ficam salvas só neste computador, na pasta <code>dados</code> do app. Nunca compartilhe essa pasta.</p>
+      <p class="modal-intro">O app usa uma conta só, a do fal.ai, para gerar a voz e o vídeo. A chave fica salva só neste computador, na pasta <code>dados</code> do app. Nunca compartilhe essa pasta.</p>
 
       <div class="servico">
-        <div class="servico-cab"><strong>fal.ai</strong><span class="sub">gera os vídeos · cobra por segundo de vídeo</span></div>
+        <div class="servico-cab"><strong>fal.ai</strong><span class="sub">gera a voz e o vídeo · um saldo só</span></div>
         <div class="campo linha">
           <input type="password" id="chave-fal" autocomplete="off" placeholder="Cole a chave da API do fal.ai">
           <button class="btn btn-sec" type="button" data-testar="fal">Testar</button>
         </div>
         <p class="servico-status" id="status-fal"></p>
-        <a class="link" href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">Onde pego minha chave do fal.ai?</a>
-      </div>
-
-      <div class="servico">
-        <div class="servico-cab"><strong>ElevenLabs</strong><span class="sub">gera a voz a partir do texto</span></div>
-        <div class="campo linha">
-          <input type="password" id="chave-eleven" autocomplete="off" placeholder="Cole a chave da API do ElevenLabs">
-          <button class="btn btn-sec" type="button" data-testar="eleven">Testar</button>
-        </div>
-        <p class="servico-status" id="status-eleven"></p>
-        <a class="link" href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">Onde pego minha chave do ElevenLabs?</a>
+        <div class="links"><a class="link" href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">Onde pego minha chave?</a>
+          <a class="link" href="https://fal.ai/dashboard/billing" target="_blank" rel="noopener">Ver saldo e adicionar créditos</a></div>
       </div>
 
       <footer class="modal-rodape">
