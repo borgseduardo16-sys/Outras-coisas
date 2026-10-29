@@ -1,0 +1,12 @@
+{
+  "name": "persona-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Estúdio local para criar vídeos de personagens falando (fal.ai + ElevenLabs).",
+  "type": "module",
+  "engines": { "node": ">=18.17" },
+  "scripts": {
+    "start": "node servidor.mjs",
+    "test": "node --test testes/app.test.mjs"
+  }
+}

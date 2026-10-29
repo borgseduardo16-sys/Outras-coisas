@@ -1,0 +1,100 @@
+PERSONA STUDIO
+Crie vídeos de um personagem falando: você manda a foto, escreve o texto (ou envia um áudio)
+e escolhe como ele se comporta. O vídeo é gerado por um modelo de IA no fal.ai e a voz pelo ElevenLabs.
+
+O realismo do vídeo vem do modelo escolhido no fal.ai, não deste app. O app organiza o trabalho:
+prepara a foto, a voz e as instruções, manda para o modelo, acompanha e guarda o resultado.
+
+
+1. INSTALAR (uma vez só)
+------------------------
+1) Instale o Node.js, versão LTS: https://nodejs.org/pt-br/download
+2) Descompacte esta pasta onde quiser (por exemplo, em Documentos).
+
+
+2. ABRIR
+--------
+Windows: dois cliques em "iniciar.bat".
+Mac: dois cliques em "iniciar.command" (se o Mac bloquear: botão direito > Abrir).
+
+Abre uma janela preta e o navegador em http://localhost:4317
+Deixe a janela preta aberta enquanto usa o app. Para fechar, feche a janela.
+
+
+3. CONECTAR AS CONTAS (uma vez só)
+----------------------------------
+Clique em "Configurações" no canto de cima.
+
+fal.ai (gera o vídeo, cobra por segundo de vídeo):
+  - Crie a conta em https://fal.ai e adicione créditos em Billing.
+  - Crie a chave em https://fal.ai/dashboard/keys e cole no app.
+
+ElevenLabs (gera a voz a partir do texto):
+  - Em https://elevenlabs.io/app/settings/api-keys crie uma chave.
+  - Se aparecerem permissões, libere "Text to Speech" e "Voices" (leitura).
+  - Cole no app. As suas vozes (inclusive vozes clonadas) aparecem na lista.
+
+Sem as chaves o app funciona em MODO DEMONSTRAÇÃO: simula tudo sem gastar nada,
+para você conhecer as telas. O resultado da demonstração é só a foto com o áudio.
+
+
+4. FAZER UM VÍDEO
+-----------------
+1) Personagem: envie a foto, escolha o formato (9:16 para Reels/TikTok), arraste para enquadrar
+   e clique em "Usar esta foto". Ela fica salva na Biblioteca.
+2) Fala: escreva o texto, escolha a voz e clique em "Gerar voz e ouvir".
+   Ou vá em "Enviar áudio" e mande um áudio pronto (por exemplo, baixado do ElevenLabs).
+3) Direção: enquadramento, energia, gestos, expressão e câmera.
+4) Modelo: escolha o modelo e a resolução.
+5) Marque a confirmação e clique em "Gerar vídeo". Leva alguns minutos.
+   Pode fechar a aba: quando abrir de novo, o app continua acompanhando.
+6) Quando ficar pronto, clique em "Baixar MP4". Os vídeos ficam em "Seus vídeos".
+
+
+5. DICAS PARA FICAR MAIS REAL
+-----------------------------
+- Foto: rosto de frente, nítido, boa luz, boca fechada ou levemente aberta, sem mão no rosto
+  e sem óculos escuros. Use a foto já no formato do vídeo (9:16 para Reels).
+- Voz: frases curtas e naturais, como se falasse com uma amiga. Pontuação ajuda na entonação.
+  No modelo de voz "Eleven v3" dá para usar marcações em inglês, como [laughs] (risada)
+  ou [whispers] (sussurro).
+- Áudio enviado: só a voz, sem música de fundo.
+- OmniHuman 1.5 é o mais realista (mexe cabeça, rosto e mãos). Para testar roteiros
+  gastando menos, use "Modo rápido" ou o Kling Avatar 2 Standard.
+- Limites: OmniHuman aceita até 30 s de áudio em 1080p e até 60 s em 720p.
+  Para vídeos maiores, divida em partes e junte no editor.
+
+
+6. CUSTOS
+---------
+Quem cobra é o fal.ai (vídeo) e o ElevenLabs (voz), direto na sua conta deles.
+O app mostra um custo estimado com preços de referência de outubro de 2026.
+Os preços mudam: confira sempre na página do modelo no fal.ai antes de gerar muitos vídeos.
+A mesma fala gerada de novo, com o mesmo texto e a mesma voz, é reaproveitada (não paga duas vezes).
+
+
+7. ONDE FICAM OS ARQUIVOS
+-------------------------
+Tudo fica neste computador, na pasta "dados" (criada ao abrir o app):
+  dados/videos       os vídeos gerados
+  dados/personagens  as fotos da biblioteca
+  dados/audios       as falas
+  dados/config.json  as suas chaves. NUNCA envie esta pasta para ninguém.
+
+
+8. PROBLEMAS COMUNS
+-------------------
+"Chave recusada": copie a chave de novo, sem espaços, e use "Testar" em Configurações.
+"Saldo insuficiente": adicione créditos na conta do fal.ai.
+"O modelo não foi encontrado": o fal.ai pode ter mudado o nome do modelo. Use
+  "Outro modelo do fal.ai" e cole o endpoint que aparece na página do modelo.
+A janela preta fechou: abra o iniciar.bat de novo. Vídeos que já estavam na fila do fal.ai
+  continuam; se tiver fechado no meio do envio, gere de novo.
+
+
+9. USO RESPONSÁVEL
+------------------
+- Use só fotos e vozes que você tem direito de usar. Não faça vídeos com o rosto ou a voz
+  de uma pessoa real sem autorização dela.
+- Não apresente o personagem como cliente, médico ou pessoa real. Em anúncios, o Meta
+  pode exigir ou mostrar um aviso de conteúdo feito com IA.

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Persona Studio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1115'/%3E%3Ccircle cx='16' cy='13' r='5' fill='%23fff'/%3E%3Cpath d='M7 27c1.5-5 5-7 9-7s7.5 2 9 7' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">
+      <span class="marca-logo" aria-hidden="true"></span>
+      <span class="marca-nome">Persona <b>Studio</b></span>
+    </div>
+    <div class="topo-dir">
+      <span class="conexao" id="conexao-fal"><i></i><span>fal.ai</span></span>
+      <span class="conexao" id="conexao-eleven"><i></i><span>ElevenLabs</span></span>
+      <button class="btn btn-sec" id="abrir-config" type="button" data-icone="ajustes" aria-label="Configurações"><span class="btn-texto">Configurações</span></button>
+    </div>
+  </header>
+
+  <div class="aviso-demo" id="aviso-demo" hidden>
+    <strong>Modo demonstração.</strong>
+    <span>O app simula a geração sem gastar créditos. Para gerar vídeos de verdade, conecte o fal.ai em Configurações.</span>
+    <button class="link" type="button" data-abrir-config>Conectar agora</button>
+  </div>
+
+  <main class="layout">
+    <section class="editor" aria-label="Montagem do vídeo">
+
+      <!-- 1. Personagem -->
+      <article class="etapa" id="etapa-personagem">
+        <header class="etapa-cab">
+          <span class="etapa-num">1</span>
+          <div><h2>Personagem</h2><p>A foto que vai ganhar vida. Rosto de frente, bem iluminado e nítido.</p></div>
+        </header>
+        <div class="abas" role="tablist">
+          <button class="aba ativa" role="tab" data-aba="nova" type="button">Nova foto</button>
+          <button class="aba" role="tab" data-aba="biblioteca" type="button">Biblioteca <span class="contador" id="qtd-personagens">0</span></button>
+        </div>
+
+        <div class="aba-painel" data-painel="nova">
+          <label class="soltar" id="soltar-imagem">
+            <input type="file" accept="image/jpeg,image/png,image/webp" id="arquivo-imagem" hidden>
+            <span class="soltar-icone" data-icone="imagem"></span>
+            <span class="soltar-titulo">Arraste a foto aqui ou clique para escolher</span>
+            <span class="soltar-dica">JPG, PNG ou WEBP · de preferência 1080 px ou mais</span>
+          </label>
+
+          <div class="recorte" id="recorte" hidden>
+            <div class="campo">
+              <span class="rotulo">Formato do vídeo</span>
+              <div class="segmentos" id="formato">
+                <button type="button" data-valor="9:16" class="ativo">9:16 <small>Reels · Stories · TikTok</small></button>
+                <button type="button" data-valor="1:1">1:1 <small>Feed</small></button>
+                <button type="button" data-valor="16:9">16:9 <small>YouTube</small></button>
+              </div>
+            </div>
+            <div class="recorte-area">
+              <canvas id="recorte-canvas" aria-label="Arraste para posicionar a foto"></canvas>
+              <span class="recorte-dica">Arraste para posicionar</span>
+            </div>
+            <div class="campo linha">
+              <span class="rotulo">Zoom</span>
+              <input type="range" id="recorte-zoom" min="1" max="3" step="0.01" value="1">
+            </div>
+            <div class="campo linha">
+              <input type="text" id="nome-personagem" placeholder="Nome do personagem (ex.: Ana, influencer)" maxlength="60">
+              <button class="btn btn-pri" id="salvar-personagem" type="button">Usar esta foto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="aba-painel" data-painel="biblioteca" hidden>
+          <div class="galeria" id="galeria-personagens"></div>
+          <p class="vazio" id="galeria-vazia">Nenhum personagem salvo ainda. Envie uma foto em “Nova foto”.</p>
+        </div>
+      </article>
+
+      <!-- 2. Fala -->
+      <article class="etapa" id="etapa-fala">
+        <header class="etapa-cab">
+          <span class="etapa-num">2</span>
+          <div><h2>Fala</h2><p>Escreva o roteiro para a voz falar ou envie um áudio pronto.</p></div>
+        </header>
+        <div class="abas" role="tablist">
+          <button class="aba ativa" role="tab" data-aba="texto" type="button">Escrever texto</button>
+          <button class="aba" role="tab" data-aba="audio" type="button">Enviar áudio</button>
+        </div>
+
+        <div class="aba-painel" data-painel="texto">
+          <div class="campo">
+            <textarea id="texto" rows="5" maxlength="4000" placeholder="Ex.: Gente, vocês não vão acreditar no que aconteceu comigo essa semana…"></textarea>
+            <div class="texto-rodape"><span id="texto-contagem">0 caracteres</span><span id="texto-duracao"></span></div>
+          </div>
+          <div class="campos-2">
+            <label class="campo"><span class="rotulo">Voz</span><select id="voz"></select></label>
+            <label class="campo"><span class="rotulo">Modelo de voz</span><select id="modelo-voz"></select></label>
+          </div>
+          <p class="nota" id="nota-voz" hidden></p>
+          <details class="detalhes">
+            <summary>Ajustes da voz</summary>
+            <div class="ajustes">
+              <label class="ajuste"><span>Estabilidade <em>mais variação ↔ mais constante</em></span><input type="range" id="aj-estabilidade" min="0" max="1" step="0.05" value="0.45"><output></output></label>
+              <label class="ajuste"><span>Semelhança <em>fidelidade à voz original</em></span><input type="range" id="aj-similaridade" min="0" max="1" step="0.05" value="0.8"><output></output></label>
+              <label class="ajuste"><span>Estilo <em>mais emoção e entonação</em></span><input type="range" id="aj-estilo" min="0" max="1" step="0.05" value="0.25"><output></output></label>
+              <label class="ajuste"><span>Velocidade</span><input type="range" id="aj-velocidade" min="0.7" max="1.2" step="0.05" value="1"><output></output></label>
+            </div>
+          </details>
+          <div class="acoes">
+            <button class="btn btn-sec" id="gerar-voz" type="button" data-icone="som">Gerar voz e ouvir</button>
+          </div>
+        </div>
+
+        <div class="aba-painel" data-painel="audio" hidden>
+          <label class="soltar compacto" id="soltar-audio">
+            <input type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/aac,.mp3,.wav,.m4a,.ogg,.aac" id="arquivo-audio" hidden>
+            <span class="soltar-icone" data-icone="som"></span>
+            <span class="soltar-titulo">Arraste o áudio ou clique para escolher</span>
+            <span class="soltar-dica">MP3, WAV, M4A, OGG ou AAC · voz limpa, sem música de fundo</span>
+          </label>
+        </div>
+
+        <div class="audio-pronto" id="audio-pronto" hidden>
+          <span class="selo-ok" data-icone="check"></span>
+          <div class="audio-info"><strong id="audio-titulo">Fala pronta</strong><span id="audio-sub"></span></div>
+          <audio id="audio-player" controls preload="metadata"></audio>
+        </div>
+      </article>
+
+      <!-- 3. Direção -->
+      <article class="etapa" id="etapa-direcao">
+        <header class="etapa-cab">
+          <span class="etapa-num">3</span>
+          <div><h2>Direção</h2><p>Como o personagem se comporta enquanto fala.</p></div>
+        </header>
+        <p class="nota" id="nota-direcao" hidden>O modelo escolhido não usa instruções de direção: ele anima a partir da foto e do áudio.</p>
+        <div class="grupos" id="direcao">
+          <div class="grupo" data-campo="enquadramento"><span class="rotulo">Enquadramento</span>
+            <div class="fichas"><button data-v="selfie" class="ativa">Selfie</button><button data-v="meio">Meio corpo</button><button data-v="close">Close no rosto</button></div></div>
+          <div class="grupo" data-campo="energia"><span class="rotulo">Energia</span>
+            <div class="fichas"><button data-v="calma">Calma</button><button data-v="natural" class="ativa">Natural</button><button data-v="animada">Animada</button><button data-v="intensa">Intensa</button></div></div>
+          <div class="grupo" data-campo="gestos"><span class="rotulo">Gestos com as mãos</span>
+            <div class="fichas"><button data-v="nenhum">Sem gestos</button><button data-v="sutis" class="ativa">Sutis</button><button data-v="expressivos">Expressivos</button></div></div>
+          <div class="grupo" data-campo="expressao"><span class="rotulo">Expressão</span>
+            <div class="fichas"><button data-v="neutra" class="ativa">Neutra</button><button data-v="sorridente">Sorridente</button><button data-v="seria">Séria</button></div></div>
+          <div class="grupo" data-campo="camera"><span class="rotulo">Câmera</span>
+            <div class="fichas"><button data-v="mao" class="ativa">Celular na mão</button><button data-v="fixa">Fixa</button></div></div>
+        </div>
+        <label class="campo"><span class="rotulo">Instruções extras <em>(opcional)</em></span>
+          <textarea id="direcao-extra" rows="2" maxlength="400" placeholder="Ex.: ela levanta as sobrancelhas na pergunta e ri no final"></textarea></label>
+        <details class="detalhes"><summary>Ver a instrução enviada ao modelo</summary><pre class="prompt" id="prompt"></pre></details>
+      </article>
+
+      <!-- 4. Modelo -->
+      <article class="etapa" id="etapa-modelo">
+        <header class="etapa-cab">
+          <span class="etapa-num">4</span>
+          <div><h2>Modelo de vídeo</h2><p>Quem gera o vídeo. O realismo depende do modelo escolhido.</p></div>
+        </header>
+        <div class="modelos" id="modelos" role="radiogroup"></div>
+        <div class="campos-2" id="opcoes-modelo">
+          <div class="campo" id="campo-resolucao"><span class="rotulo">Resolução</span><div class="segmentos pequeno" id="resolucao"></div></div>
+          <label class="campo check" id="campo-rapido"><input type="checkbox" id="rapido"><span>Modo rápido <em>gera mais rápido, com um pouco menos de qualidade (bom para testar)</em></span></label>
+        </div>
+        <div id="campos-personalizado" hidden>
+          <label class="campo"><span class="rotulo">Endpoint do modelo no fal.ai</span><input type="text" id="endpoint" placeholder="fal-ai/nome-do-modelo"></label>
+          <label class="campo"><span class="rotulo">Campos extras em JSON <em>(opcional)</em></span><textarea id="extras" rows="2" placeholder='{"resolution": "720p"}'></textarea></label>
+          <p class="nota">O app envia <code>image_url</code>, <code>audio_url</code> e <code>prompt</code>. Confira na página do modelo se ele usa esses nomes.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- Palco: prévia, geração e resultado -->
+    <aside class="palco" aria-label="Prévia e resultado">
+      <div class="palco-cartao">
+        <div class="tela" id="tela" data-formato="9:16">
+          <div class="tela-vazia" id="tela-vazia"><span data-icone="pessoa"></span><p>Escolha um personagem para ver a prévia</p></div>
+          <img id="tela-imagem" alt="" hidden>
+          <video id="tela-video" controls playsinline hidden></video>
+          <div class="tela-demo" id="tela-demo" hidden>Prévia de demonstração: a foto com o áudio. O vídeo animado é gerado quando o fal.ai está conectado.</div>
+          <div class="tela-status" id="tela-status" hidden>
+            <div class="status-cartao">
+              <strong id="status-titulo">Preparando…</strong>
+              <span id="status-sub"></span>
+              <div class="barra"><i id="status-barra"></i></div>
+              <ol class="passos" id="passos">
+                <li data-p="enviando">Envio</li><li data-p="na_fila">Fila</li><li data-p="gerando">Geração</li><li data-p="pronto">Pronto</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="resumo" id="resumo">
+          <div><span>Duração</span><strong id="r-duracao">—</strong></div>
+          <div><span>Modelo</span><strong id="r-modelo">—</strong></div>
+          <div><span>Custo estimado</span><strong id="r-custo">—</strong></div>
+        </div>
+        <p class="alerta" id="alerta" hidden></p>
+
+        <label class="consentimento"><input type="checkbox" id="consentimento">
+          <span>Tenho o direito de usar esta imagem e esta voz, e não vou usar o vídeo para enganar ninguém (por exemplo, fingir ser uma pessoa real ou um cliente real).</span></label>
+
+        <div class="palco-acoes" id="palco-acoes">
+          <button class="btn btn-pri btn-grande" id="gerar" type="button" disabled>Gerar vídeo</button>
+        </div>
+        <div class="palco-acoes" id="acoes-resultado" hidden>
+          <a class="btn btn-pri" id="baixar" data-icone="baixar" download>Baixar MP4</a>
+          <button class="btn btn-sec" id="novo" type="button">Fazer outro</button>
+        </div>
+        <div class="palco-acoes" id="acoes-erro" hidden>
+          <button class="btn btn-pri" id="tentar" type="button">Tentar de novo</button>
+          <button class="btn btn-sec" id="voltar" type="button">Voltar</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="biblioteca">
+    <div class="biblioteca-cab">
+      <h2>Seus vídeos</h2>
+      <span class="sub" id="qtd-videos"></span>
+    </div>
+    <div class="lista-videos" id="lista-videos"></div>
+    <p class="vazio" id="videos-vazio">Os vídeos que você gerar aparecem aqui e ficam salvos neste computador.</p>
+  </section>
+
+  <dialog class="modal" id="modal-config">
+    <form method="dialog" class="modal-corpo" id="form-config">
+      <header class="modal-cab"><h2>Configurações</h2><button class="icone-btn" value="fechar" aria-label="Fechar" data-icone="x"></button></header>
+      <p class="modal-intro">As chaves ficam salvas só neste computador, na pasta <code>dados</code> do app. Nunca compartilhe essa pasta.</p>
+
+      <div class="servico">
+        <div class="servico-cab"><strong>fal.ai</strong><span class="sub">gera os vídeos · cobra por segundo de vídeo</span></div>
+        <div class="campo linha">
+          <input type="password" id="chave-fal" autocomplete="off" placeholder="Cole a chave da API do fal.ai">
+          <button class="btn btn-sec" type="button" data-testar="fal">Testar</button>
+        </div>
+        <p class="servico-status" id="status-fal"></p>
+        <a class="link" href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">Onde pego minha chave do fal.ai?</a>
+      </div>
+
+      <div class="servico">
+        <div class="servico-cab"><strong>ElevenLabs</strong><span class="sub">gera a voz a partir do texto</span></div>
+        <div class="campo linha">
+          <input type="password" id="chave-eleven" autocomplete="off" placeholder="Cole a chave da API do ElevenLabs">
+          <button class="btn btn-sec" type="button" data-testar="eleven">Testar</button>
+        </div>
+        <p class="servico-status" id="status-eleven"></p>
+        <a class="link" href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">Onde pego minha chave do ElevenLabs?</a>
+      </div>
+
+      <footer class="modal-rodape">
+        <button class="btn btn-sec" value="fechar">Cancelar</button>
+        <button class="btn btn-pri" id="salvar-config" type="button">Salvar</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="avisos" id="avisos" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
